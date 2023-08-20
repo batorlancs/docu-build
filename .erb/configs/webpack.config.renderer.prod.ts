@@ -51,6 +51,7 @@ const configuration: webpack.Configuration = {
                         },
                     },
                     "sass-loader",
+                    // "postcss-loader",
                 ],
                 include: /\.module\.s?(c|a)ss$/,
             },
@@ -116,7 +117,8 @@ const configuration: webpack.Configuration = {
         }),
 
         new BundleAnalyzerPlugin({
-            analyzerMode: process.env.ANALYZE === "true" ? "server" : "disabled",
+            analyzerMode:
+                process.env.ANALYZE === "true" ? "server" : "disabled",
             analyzerPort: 8889,
         }),
 

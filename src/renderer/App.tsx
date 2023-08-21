@@ -1,23 +1,41 @@
-import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
-import { CssVarsProvider, Button, Sheet } from "@mui/joy";
+import {
+    MemoryRouter as Router,
+    Routes,
+    Route,
+    useNavigate,
+} from "react-router-dom";
+import { CssVarsProvider, Button } from "@mui/joy";
 import theme from "./theme";
 import "./App.css";
-// import "tailwindcss/tailwind.css";
+import { setWindowSize } from "./utils";
 
 function Hello() {
     const { ipcRenderer } = window.electron;
+    const navigate = useNavigate();
 
     const handleClick = async () => {
-        // const path = (await ipcRenderer.invoke('get-app-path')) as string;
         const path = await ipcRenderer.getAppPath();
         console.log(path);
+        setWindowSize(1800, 1600);
+        navigate("/home");
+    };
+
+    const handleClick2 = async () => {
+        console.log("open new window");
     };
 
     return (
-        // <Sheet className="bg-green-500 flex items-center">
-        // </Sheet>
-        <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center">
+        <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center gap-6">
             <Button onClick={handleClick}>Hello</Button>
+            <Button onClick={handleClick2}>Open New Window</Button>
+        </div>
+    );
+}
+
+function Home() {
+    return (
+        <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center">
+            Home
         </div>
     );
 }
@@ -32,6 +50,7 @@ export default function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Hello />} />
+                    <Route path="/home" element={<Home />} />
                 </Routes>
             </Router>
         </CssVarsProvider>

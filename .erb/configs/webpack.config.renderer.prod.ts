@@ -51,12 +51,27 @@ const configuration: webpack.Configuration = {
                         },
                     },
                     "sass-loader",
+                    {
+                        loader: "postcss-loader",
+                        options: {
+                            ident: "postcss",
+                            plugins: [
+                                require("tailwindcss"),
+                                require("autoprefixer"),
+                            ],
+                        },
+                    },
                 ],
                 include: /\.module\.s?(c|a)ss$/,
             },
             {
                 test: /\.s?(a|c)ss$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    "css-loader",
+                    "sass-loader",
+                    "postcss-loader",
+                ],
                 exclude: /\.module\.s?(c|a)ss$/,
             },
             // Fonts
@@ -116,7 +131,8 @@ const configuration: webpack.Configuration = {
         }),
 
         new BundleAnalyzerPlugin({
-            analyzerMode: process.env.ANALYZE === "true" ? "server" : "disabled",
+            analyzerMode:
+                process.env.ANALYZE === "true" ? "server" : "disabled",
             analyzerPort: 8889,
         }),
 

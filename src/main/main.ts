@@ -14,6 +14,10 @@ import { autoUpdater } from "electron-updater";
 import log from "electron-log";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
+import type { createWindowOptions } from ".";
+
+const DEFAULT_WIDTH = 1024;
+const DEFAULT_HEIGHT = 728;
 
 class AppUpdater {
     constructor() {
@@ -60,7 +64,13 @@ const installExtensions = async () => {
         .catch(console.log);
 };
 
-const createWindow = async () => {
+const createWindow = async (options?: createWindowOptions) => {
+    const {
+        navigate,
+        width = DEFAULT_WIDTH,
+        height = DEFAULT_HEIGHT,
+    } = options || {};
+
     if (isDebug) {
         await installExtensions();
     }
@@ -75,8 +85,8 @@ const createWindow = async () => {
 
     mainWindow = new BrowserWindow({
         show: false,
-        width: 1024,
-        height: 728,
+        width,
+        height,
         icon: getAssetPath("icon.png"),
         webPreferences: {
             preload: app.isPackaged
@@ -85,7 +95,9 @@ const createWindow = async () => {
         },
     });
 
-    mainWindow.loadURL(resolveHtmlPath("index.html"));
+    mainWindow.loadURL(
+        resolveHtmlPath(`index.html${navigate ? `#${navigate}` : ""}`)
+    );
 
     mainWindow.on("ready-to-show", () => {
         if (!mainWindow) {
@@ -115,6 +127,22 @@ const createWindow = async () => {
     // eslint-disable-next-line
     new AppUpdater();
 };
+
+ipcMain.on("close-window", async () => {
+    if (mainWindow) {
+        mainWindow.close();
+    }
+});
+
+ipcMain.on("set-window-size", (_, arg) => {
+    const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = arg as {
+        width: number;
+        height: number;
+    };
+    if (mainWindow) {
+        mainWindow.setSize(width, height);
+    }
+});
 
 /**
  * Add event listeners...

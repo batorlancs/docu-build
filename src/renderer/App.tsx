@@ -1,61 +1,58 @@
-import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
-import icon from "../../assets/icon.svg";
+import {
+    MemoryRouter as Router,
+    Routes,
+    Route,
+    useNavigate,
+} from "react-router-dom";
+import { CssVarsProvider, Button } from "@mui/joy";
+import theme from "./theme";
 import "./App.css";
+import { setWindowSize } from "./utils";
 
 function Hello() {
-    const { ipcRenderer } = window.electron;
+    const navigate = useNavigate();
 
-    const hanldeClick = async () => {
-        // const path = (await ipcRenderer.invoke('get-app-path')) as string;
+    const handleClick = async () => {
+        const { ipcRenderer } = window.electron;
         const path = await ipcRenderer.getAppPath();
         console.log(path);
+        setWindowSize(1800, 1600);
+        navigate("/home");
+    };
+
+    const handleClick2 = async () => {
+        console.log("open new window");
     };
 
     return (
-        <div>
-            <div className="Hello">
-                <img width="200" alt="icon" src={icon} />
-            </div>
-            <h1>electron-react-boilerplate</h1>
-            <div className="Hello">
-                <button type="button" onClick={hanldeClick}>
-                    Click me
-                </button>
-                <a
-                    href="https://electron-react-boilerplate.js.org/"
-                    target="_blank"
-                    rel="noreferrer"
-                >
-                    <button type="button">
-                        <span role="img" aria-label="books">
-                            📚
-                        </span>
-                        Read our docs
-                    </button>
-                </a>
-                <a
-                    href="https://github.com/sponsors/electron-react-boilerplate"
-                    target="_blank"
-                    rel="noreferrer"
-                >
-                    <button type="button">
-                        <span role="img" aria-label="folded hands">
-                            🙏
-                        </span>
-                        Donate
-                    </button>
-                </a>
-            </div>
+        <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center gap-6">
+            <Button onClick={handleClick}>Hello</Button>
+            <Button onClick={handleClick2}>Open New Window</Button>
+        </div>
+    );
+}
+
+function Home() {
+    return (
+        <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center">
+            Home
         </div>
     );
 }
 
 export default function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Hello />} />
-            </Routes>
-        </Router>
+        <CssVarsProvider
+            theme={theme}
+            defaultMode="dark"
+            modeStorageKey="demo_dark-mode-by-default"
+        >
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Hello />} />
+                    <Route path="/home" element={<Home />} />
+                </Routes>
+            </Router>
+        </CssVarsProvider>
     );
 }

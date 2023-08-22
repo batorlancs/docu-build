@@ -10,10 +10,10 @@ import "./App.css";
 import { setWindowSize } from "./utils";
 
 function Hello() {
-    const { ipcRenderer } = window.electron;
     const navigate = useNavigate();
 
     const handleClick = async () => {
+        const { ipcRenderer } = window.electron;
         const path = await ipcRenderer.getAppPath();
         console.log(path);
         setWindowSize(1800, 1600);

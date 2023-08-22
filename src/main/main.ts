@@ -16,8 +16,8 @@ import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
 
-const DEFAULT_WIDTH = 1024;
-const DEFAULT_HEIGHT = 728;
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 600;
 
 class AppUpdater {
     constructor() {

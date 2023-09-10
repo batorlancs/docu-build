@@ -192,10 +192,14 @@ ipcMain.handle("get-folder-structure", async (event, arg) => {
     return folderStructure;
 });
 
-ipcMain.handle("create-project", async (event, args) => {
+ipcMain.handle("create-project", (event, args) => {
     return home.createProject(args.name, args.path);
 });
 
-ipcMain.handle("start-server", async (event, args) => {
+ipcMain.handle("start-server", (event, args) => {
     return home.startServer(args.name);
+});
+
+ipcMain.handle("get-projects-data", () => {
+    return home.getProjectsData();
 });

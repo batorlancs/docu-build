@@ -1,18 +1,8 @@
-import React from "react";
-import {
-    Input,
-    Button,
-    type ButtonProps,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemDecorator,
-    ListItemContent,
-    ListDivider,
-    Typography,
-    Avatar,
-} from "@mui/joy";
+import React, { useEffect, useState } from "react";
+import { Input, Button, type ButtonProps, List, ListDivider } from "@mui/joy";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ProjectData } from "main/store";
+import ProjectItem from "./ProjectItem";
 
 function OutlinedButton({
     children,
@@ -38,7 +28,6 @@ const createProject = () => {
             return null;
         })
         .catch((err: Error) => {
-            console.log("project already exists");
             console.log(err.message);
         });
 };
@@ -51,12 +40,34 @@ const startServer = () => {
             return null;
         })
         .catch((err) => {
-            console.log("project already exists");
             console.log(err);
         });
 };
 
+const getProjects = async (): Promise<ProjectData[]> => {
+    try {
+        const projects = window.electron.ipcRenderer.getProjects();
+        return projects;
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
+};
+
 function Project() {
+    const [projects, setProjects] = useState<ProjectData[]>([]);
+
+    useEffect(() => {
+        getProjects()
+            .then((res) => {
+                setProjects(res);
+                return null;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
     return (
         <div>
             <div className="flex items-center justify-between gap-2">
@@ -77,96 +88,12 @@ function Project() {
                     borderRadius: "sm",
                 }}
             >
-                <ListItem>
-                    <ListItemButton disabled={false} selected={false}>
-                        <ListItemDecorator>
-                            <Avatar
-                                color="primary"
-                                sx={{
-                                    borderRadius: "sm",
-                                }}
-                            >
-                                N
-                            </Avatar>
-                        </ListItemDecorator>
-                        <ListItemContent>
-                            <div className="overflow-hidden pl-3">
-                                <Typography color="primary">name</Typography>
-                                <Typography
-                                    color="neutral"
-                                    level="body-xs"
-                                    sx={{
-                                        opacity: 0.5,
-                                    }}
-                                >
-                                    path/to/something/really/really/long/asdadasdsadsahdiashdiuashdiashdiashdiahdha
-                                </Typography>
-                            </div>
-                        </ListItemContent>
-                    </ListItemButton>
-                </ListItem>
-                <ListDivider />
-                <ListItem>
-                    <ListItemButton disabled={false} selected={false}>
-                        <ListItemDecorator>
-                            <Avatar
-                                color="primary"
-                                sx={{
-                                    borderRadius: "sm",
-                                }}
-                            >
-                                PN
-                            </Avatar>
-                        </ListItemDecorator>
-                        <ListItemContent>
-                            <div className="overflow-hidden pl-3">
-                                <Typography color="primary">
-                                    project name 2
-                                </Typography>
-                                <Typography
-                                    color="neutral"
-                                    level="body-xs"
-                                    sx={{
-                                        opacity: 0.5,
-                                    }}
-                                >
-                                    path/to/something/really/really/long/asdadasdsadsahdiashdiuashdiashdiashdiahdha
-                                </Typography>
-                            </div>
-                        </ListItemContent>
-                    </ListItemButton>
-                </ListItem>
-                <ListDivider />
-                <ListItem>
-                    <ListItemButton disabled={false} selected={false}>
-                        <ListItemDecorator>
-                            <Avatar
-                                color="primary"
-                                sx={{
-                                    borderRadius: "sm",
-                                }}
-                            >
-                                S
-                            </Avatar>
-                        </ListItemDecorator>
-                        <ListItemContent>
-                            <div className="overflow-hidden pl-3">
-                                <Typography color="primary">
-                                    something
-                                </Typography>
-                                <Typography
-                                    color="neutral"
-                                    level="body-xs"
-                                    sx={{
-                                        opacity: 0.5,
-                                    }}
-                                >
-                                    path/to/something/really/really/long/asdadasdsadsahdiashdiuashdiashdiashdiahdha
-                                </Typography>
-                            </div>
-                        </ListItemContent>
-                    </ListItemButton>
-                </ListItem>
+                {projects.map((project, projectIndex) => (
+                    <div key={project.id}>
+                        <ProjectItem data={project} />
+                        {projects.length - 1 > projectIndex && <ListDivider />}
+                    </div>
+                ))}
             </List>
         </div>
     );

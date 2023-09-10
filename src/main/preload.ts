@@ -2,6 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { createWindowOptions } from "./index";
+import { ProjectData } from "./store";
 
 export type Channels = "ipc-example";
 export type InvokeChannels =
@@ -77,10 +78,8 @@ const electronHandler = {
                 name,
             });
         },
-        stopServer(name: string): Promise<void> {
-            return ipcRenderer.invoke("stop-project", {
-                name,
-            });
+        getProjects(): Promise<ProjectData[]> {
+            return ipcRenderer.invoke("get-projects-data");
         },
     },
 };

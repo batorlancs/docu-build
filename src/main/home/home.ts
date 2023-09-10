@@ -1,10 +1,42 @@
 import * as fs from "fs";
+import { v4 as uuidv4 } from "uuid";
 import { execute } from "../util";
 import { paths } from "../globals";
+import { store, ProjectData } from "../store";
 
-async function createDocuProject(name: string, projectPath: string) {
-    await execute("npm -v && npx -v");
-    await execute(`npx create-docusaurus@latest ${name} classic`, projectPath);
+export function getProjectsData(): ProjectData[] {
+    return store.get("projects");
+}
+
+function addProjectData(
+    data: Omit<ProjectData, "id" | "createdAt" | "updatedAt">
+): void {
+    const projectsData = getProjectsData();
+    // if name is already taken do nothing
+    if (projectsData.find((project) => project.name === data.name)) {
+        return;
+    }
+    projectsData.push({
+        id: uuidv4(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...data,
+    });
+    store.set("projects", projectsData);
+}
+
+async function createDocuProject(
+    name: string,
+    toPath: string
+): Promise<string> {
+    await execute("node -v");
+    await execute(`npx create-docusaurus@latest ${name} classic`, toPath);
+    addProjectData({
+        name,
+        path: `${toPath}/${name}`,
+        template: "classic",
+    });
+    return `${toPath}/${name}`;
 }
 
 function createFolder(path: string) {
@@ -21,33 +53,13 @@ export async function createProject(
     createFolder(paths.projects);
     // create project at the correct path
     if (path) {
-        await createDocuProject(name, path);
-        return `${path}/${name}`;
+        return createDocuProject(name, path);
     }
     if (!fs.existsSync(`${paths.projects}/${name}`)) {
-        await createDocuProject(name, paths.projects);
-        return `${paths.projects}/${name}`;
+        return createDocuProject(name, paths.projects);
     }
     throw new Error("project already exists");
 }
-
-// export function startServer(name: string): Promise<string> {
-//     return new Promise((resolve, reject) => {
-//         if (!fs.existsSync(`${paths.projects}/${name}`)) {
-//             throw new Error("project does not exist");
-//         } else {
-//             console.log("npm run start at", `${paths.projects}/${name}`);
-//             execute("npm run start", `${paths.projects}/${name}`)
-//                 .then(() => {
-//                     resolve(`server started`);
-//                     return null;
-//                 })
-//                 .catch((err) => {
-//                     reject(err);
-//                 });
-//         }
-//     });
-// }
 
 export async function startServer(name: string): Promise<void> {
     if (!fs.existsSync(`${paths.projects}/${name}`)) {

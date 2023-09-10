@@ -34,22 +34,24 @@ const createProject = () => {
     window.electron.ipcRenderer
         .createProject("firstdocu")
         .then((res) => {
-            console.log("DONEEEEEE");
+            console.log("CREATED PROJECT", res);
             return null;
         })
-        .catch((err) => {
-            console.log(err);
+        .catch((err: Error) => {
+            console.log("project already exists");
+            console.log(err.message);
         });
 };
 
 const startServer = () => {
     window.electron.ipcRenderer
         .startServer("firstdocu")
-        .then((res) => {
-            console.log("server: ", res);
+        .then(() => {
+            console.log("STARTED SERVER");
             return null;
         })
         .catch((err) => {
+            console.log("project already exists");
             console.log(err);
         });
 };

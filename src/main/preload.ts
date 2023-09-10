@@ -66,7 +66,7 @@ const electronHandler = {
                 height,
             });
         },
-        createProject(name: string, path?: string): Promise<void> {
+        createProject(name: string, path?: string): Promise<string> {
             return ipcRenderer.invoke("create-project", {
                 name,
                 path,
@@ -77,7 +77,7 @@ const electronHandler = {
                 name,
             });
         },
-        stopServer(name: string): Promise<string> {
+        stopServer(name: string): Promise<void> {
             return ipcRenderer.invoke("stop-project", {
                 name,
             });

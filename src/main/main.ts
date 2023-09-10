@@ -12,6 +12,8 @@ import path from "path";
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
+import * as fs from "fs";
+import { exec } from "child_process";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
@@ -166,3 +168,81 @@ app.whenReady()
         });
     })
     .catch(console.log);
+
+/**
+ * handlers
+ */
+
+ipcMain.handle("get-files", async () => {
+    const files = fs.readdirSync(app.getAppPath());
+    return files;
+});
+
+ipcMain.handle("get-file", async (event, arg) => {
+    const file = fs.readFileSync(`${app.getAppPath()}/${arg}`);
+    return file;
+});
+
+ipcMain.handle("create-folder", async (event, arg) => {
+    fs.mkdirSync(`${app.getAppPath()}/${arg}`);
+});
+
+ipcMain.handle("get-folder-structure", async (event, arg) => {
+    const folderStructure = fs.readdirSync(`${app.getAppPath()}/${arg}`);
+    return folderStructure;
+});
+
+async function execute(command: string, commandPath?: string) {
+    const executePath: string = commandPath || app.getAppPath();
+    return new Promise((resolve, reject) => {
+        exec(command, { cwd: executePath }, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            }
+            if (stdout) {
+                resolve(stdout);
+            }
+            if (stderr) {
+                reject(stderr);
+            }
+        });
+    });
+}
+
+async function createProject(name: string, projectPath: string) {
+    try {
+        await execute("npm -v && npx -v");
+        await execute(
+            `npx create-docusaurus@latest ${name} classic`,
+            projectPath
+        );
+    } catch (error) {
+        console.log("an error occured creating the project");
+    }
+}
+
+ipcMain.handle("create-project", async (event, args) => {
+    // check if projects folder exists in app, if not create it
+    if (!fs.existsSync(`${app.getAppPath()}/projects`)) {
+        fs.mkdirSync(`${app.getAppPath()}/projects`);
+    }
+    if (args.path) {
+        await createProject(args.name, args.path);
+    } else if (!fs.existsSync(`${app.getAppPath()}/projects/${args.name}`)) {
+        await createProject(args.name, `${app.getAppPath()}/projects`);
+    }
+});
+
+ipcMain.handle("start-server", async (event, args) => {
+    if (!fs.existsSync(`${app.getAppPath()}/projects/${args.name}`)) {
+        throw new Error("project does not exist");
+    } else {
+        execute("npm run start", `${app.getAppPath()}/projects/${args.name}`)
+            .then((msg) => {
+                return `server started with message: ${msg}`;
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    }
+});

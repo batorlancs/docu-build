@@ -4,7 +4,13 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { createWindowOptions } from "./index";
 
 export type Channels = "ipc-example";
-export type InvokeChannels = "get-app-path";
+export type InvokeChannels =
+    | "get-app-path"
+    | "get-files"
+    | "get-file"
+    | "create-folder"
+    | "get-folder-structure"
+    | "create-project";
 
 const electronHandler = {
     ipcRenderer: {
@@ -58,6 +64,22 @@ const electronHandler = {
             ipcRenderer.send("set-window-size", {
                 width,
                 height,
+            });
+        },
+        createProject(name: string, path?: string): Promise<void> {
+            return ipcRenderer.invoke("create-project", {
+                name,
+                path,
+            });
+        },
+        startServer(name: string): Promise<string> {
+            return ipcRenderer.invoke("start-server", {
+                name,
+            });
+        },
+        stopServer(name: string): Promise<string> {
+            return ipcRenderer.invoke("stop-project", {
+                name,
             });
         },
     },

@@ -30,6 +30,30 @@ function OutlinedButton({
     );
 }
 
+const createProject = () => {
+    window.electron.ipcRenderer
+        .createProject("firstdocu")
+        .then((res) => {
+            console.log("DONEEEEEE");
+            return null;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+const startServer = () => {
+    window.electron.ipcRenderer
+        .startServer("firstdocu")
+        .then((res) => {
+            console.log("server: ", res);
+            return null;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
 function Project() {
     return (
         <div>
@@ -39,8 +63,10 @@ function Project() {
                     endDecorator={<MagnifyingGlassIcon className="w-5 h-5" />}
                     className="w-full"
                 />
-                <OutlinedButton>New Project</OutlinedButton>
-                <OutlinedButton>Open</OutlinedButton>
+                <OutlinedButton onClick={createProject}>
+                    New Project
+                </OutlinedButton>
+                <OutlinedButton onClick={startServer}>Open</OutlinedButton>
             </div>
             <List
                 variant="outlined"

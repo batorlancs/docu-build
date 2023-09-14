@@ -6,28 +6,33 @@ import ProjectItem from "./ProjectItem";
 import CreateProject from "./components/createProject/CreateProject";
 import OpenProject from "./components/openProject/OpenProject";
 
-const getProjects = async (): Promise<ProjectData[]> => {
-    try {
-        const projects = window.electron.ipcRenderer.getProjects();
-        return projects;
-    } catch (err) {
-        return [];
-    }
-};
-
 function Project() {
     const [projects, setProjects] = useState<ProjectData[]>([]);
+    const [search, setSearch] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     useEffect(() => {
+        const getProjects = async (): Promise<ProjectData[]> => {
+            try {
+                return window.electron.ipcRenderer.getProjects({
+                    name: search,
+                });
+            } catch (err) {
+                return [];
+            }
+        };
+
         getProjects()
             .then((res) => {
                 setProjects(res);
+                if (projects.length === 0) setError("No projects found");
+                else setError("");
                 return null;
             })
             .catch((err) => {
-                console.log(err);
+                setError(err.message);
             });
-    }, []);
+    }, [search, projects.length]);
 
     return (
         <div>
@@ -36,6 +41,8 @@ function Project() {
                     placeholder="Search projects"
                     endDecorator={<MagnifyingGlassIcon className="w-5 h-5" />}
                     className="w-full"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                 />
                 <CreateProject />
                 <OpenProject />
@@ -47,12 +54,20 @@ function Project() {
                     borderRadius: "sm",
                 }}
             >
-                {projects.map((project, projectIndex) => (
-                    <div key={project.id}>
-                        <ProjectItem data={project} />
-                        {projects.length - 1 > projectIndex && <ListDivider />}
+                {projects.length > 0 ? (
+                    projects.map((project, projectIndex) => (
+                        <div key={project.id}>
+                            <ProjectItem data={project} />
+                            {projects.length - 1 > projectIndex && (
+                                <ListDivider />
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div className="flex items-center justify-center h-12 my-2 bg-red-400 bg-opacity-10 text-gray-400">
+                        {error}
                     </div>
-                ))}
+                )}
             </List>
         </div>
     );

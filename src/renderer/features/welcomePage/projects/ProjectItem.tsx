@@ -21,9 +21,11 @@ function ProjectItem({ data }: ProjectItemProps) {
                         color="primary"
                         sx={{
                             borderRadius: "sm",
+                            backgroundColor: data.avatar.color,
+                            color: data.avatar.textColor,
                         }}
                     >
-                        SM
+                        {data.avatar.str}
                     </Avatar>
                 </ListItemDecorator>
                 <ListItemContent>

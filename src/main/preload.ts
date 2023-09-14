@@ -3,6 +3,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { createWindowOptions } from "./index";
 import { ProjectData } from "./store";
+import { SearchOptions } from "./home/home";
 
 export type Channels = "ipc-example";
 export type InvokeChannels =
@@ -78,8 +79,11 @@ const electronHandler = {
                 name,
             });
         },
-        getProjects(): Promise<ProjectData[]> {
-            return ipcRenderer.invoke("get-projects-data");
+        getProjects(search: SearchOptions): Promise<ProjectData[]> {
+            return ipcRenderer.invoke("get-projects-data", search);
+        },
+        removeProject(id: string): Promise<void> {
+            return ipcRenderer.invoke("remove-project-data", id);
         },
     },
 };

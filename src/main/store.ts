@@ -1,4 +1,5 @@
 import Store from "electron-store";
+import { generateColor } from "./util";
 
 export type ProjectData = {
     id: string;
@@ -7,6 +8,11 @@ export type ProjectData = {
     template: string;
     createdAt: Date;
     updatedAt: Date;
+    avatar: {
+        color: string;
+        str: string;
+        textColor: string;
+    };
 };
 
 type StoreType = {
@@ -23,6 +29,11 @@ export const store = new Store<StoreType>({
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                avatar: {
+                    color: generateColor(),
+                    str: "TE",
+                    textColor: "#ffffff",
+                },
             },
             {
                 id: "2",
@@ -31,6 +42,11 @@ export const store = new Store<StoreType>({
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                avatar: {
+                    color: generateColor(),
+                    str: "TE",
+                    textColor: "#ffffff",
+                },
             },
             {
                 id: "3",
@@ -39,7 +55,14 @@ export const store = new Store<StoreType>({
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                avatar: {
+                    color: generateColor(),
+                    str: "TE",
+                    textColor: "#ffffff",
+                },
             },
         ],
     },
 });
+
+store.clear();

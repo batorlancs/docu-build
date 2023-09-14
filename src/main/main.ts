@@ -200,6 +200,10 @@ ipcMain.handle("start-server", (event, args) => {
     return home.startServer(args.name);
 });
 
-ipcMain.handle("get-projects-data", () => {
-    return home.getProjectsData();
+ipcMain.handle("get-projects-data", (event, args) => {
+    return home.getProjectsData(args);
+});
+
+ipcMain.handle("remove-project-data", (event, args) => {
+    return home.removeProjectData(args);
 });

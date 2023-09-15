@@ -10,7 +10,7 @@ type LoadingScreenProps = {
 function LoadingScreen({ show, value }: LoadingScreenProps) {
     const [statusMsg, setStatusMsg] = React.useState<string>("");
 
-    window.electron.ipcRenderer.once("project-status", (args) => {
+    window.electron?.ipcRenderer.once("project-status", (args) => {
         // console.log("%c project status", "color: lime;", args);
         setStatusMsg(args as string);
     });

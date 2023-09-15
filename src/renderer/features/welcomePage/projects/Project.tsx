@@ -64,7 +64,7 @@ function Project() {
                         </div>
                     ))
                 ) : (
-                    <div className="flex items-center justify-center h-12 my-2 bg-red-400 bg-opacity-10 text-gray-400">
+                    <div className="flex items-center justify-center h-24 text-back-400">
                         {error}
                     </div>
                 )}

@@ -3,7 +3,6 @@ import { ModalWithButton } from "renderer/components/modals";
 import { Formik, Form, FormikProps } from "formik";
 import { FormButton, TextInput } from "renderer/components/forms";
 import * as yup from "yup";
-import { Typography } from "@mui/joy";
 import LoadingScreen from "./LoadingScreen";
 
 // const startServer = (name: string) => {
@@ -50,19 +49,18 @@ function CreateProject() {
         React.useState<string>("");
 
     const createProject = (name: string) => {
-        console.log("CREATING PROJECT", name);
+        // console.log("CREATING PROJECT", name);
         setIsCreatingProject(name);
         window.electron.ipcRenderer
             .createProject(name)
-            .then((res) => {
-                console.log("CREATED PROJECT", res);
-                // startServer(name);
-                setIsCreatingProject("");
+            .then(() => {
+                // console.log("CREATED PROJECT", res);
+                setIsCreatingProject("[done]");
                 return null;
             })
-            .catch((err: Error) => {
+            .catch(() => {
                 setIsCreatingProject("");
-                console.log(err.message);
+                // console.log(err.message);
             });
     };
 
@@ -75,27 +73,26 @@ function CreateProject() {
     };
 
     return (
-        <ModalWithButton
-            buttonProps={{
-                children: "Create Project",
-            }}
-            modalProps={{
-                title: "Create a new project",
-                modalDialogProps: {
-                    sx: {
-                        width: "400px",
-                        maxWidth: "400px",
+        <>
+            <ModalWithButton
+                buttonProps={{
+                    children: "Create Project",
+                }}
+                modalProps={{
+                    title: "Create a new project",
+                    modalDialogProps: {
+                        sx: {
+                            width: "400px",
+                            maxWidth: "400px",
+                        },
                     },
-                },
-            }}
-            onClose={resetForm}
-        >
-            {isCreatingProject === "" ? (
+                }}
+                onClose={resetForm}
+            >
                 <Formik
                     initialValues={FORM_INITIALS}
                     validationSchema={VALIDATION_SCHEMA}
                     onSubmit={handleSubmit}
-                    isInitialValid={false}
                 >
                     <Form>
                         <TextInput
@@ -114,26 +111,23 @@ function CreateProject() {
                         </FormButton>
                     </Form>
                 </Formik>
-            ) : (
-                <LoadingScreen
-                    label={
-                        <Typography
-                            color="neutral"
-                            sx={{
-                                mt: 2,
-                            }}
-                        >
-                            Creating{" "}
-                            <Typography color="primary">
-                                {isCreatingProject}
-                            </Typography>
-                            …
-                        </Typography>
-                    }
-                    value={40}
-                />
-            )}
-        </ModalWithButton>
+            </ModalWithButton>
+            <LoadingScreen
+                show={
+                    isCreatingProject !== "" && isCreatingProject !== "[done]"
+                }
+                // label={
+                //     <Typography color="neutral">
+                //         Creating{" "}
+                //         <Typography color="primary">
+                //             {isCreatingProject}
+                //         </Typography>
+                //         …
+                //     </Typography>
+                // }
+                value={40}
+            />
+        </>
     );
 }
 

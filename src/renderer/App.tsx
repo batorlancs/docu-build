@@ -4,29 +4,6 @@ import theme from "./theme";
 import "./App.css";
 import { WelcomePage } from "./pages";
 
-// function Hello() {
-//     const navigate = useNavigate();
-
-//     const handleClick = async () => {
-//         const { ipcRenderer } = window.electron;
-//         const path = await ipcRenderer.getAppPath();
-//         console.log(path);
-//         setWindowSize(1800, 1600);
-//         navigate("/home");
-//     };
-
-//     const handleClick2 = async () => {
-//         console.log("open new window");
-//     };
-
-//     return (
-//         <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center gap-6">
-//             <Button onClick={handleClick}>Hello</Button>
-//             <Button onClick={handleClick2}>Open New Window</Button>
-//         </div>
-//     );
-// }
-
 function Home() {
     return (
         <div className="bg-zinc-800 font-bold h-screen flex items-center justify-center">

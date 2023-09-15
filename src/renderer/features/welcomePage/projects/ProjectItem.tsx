@@ -6,6 +6,8 @@ import {
     Typography,
     Avatar,
 } from "@mui/joy";
+import { IconButton } from "renderer/components/buttons";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { ProjectData } from "../../../../main/store";
 
 type ProjectItemProps = {
@@ -13,9 +15,21 @@ type ProjectItemProps = {
 };
 
 function ProjectItem({ data }: ProjectItemProps) {
+    const handleButtonClick = () => {
+        try {
+            window.electron.ipcRenderer.startServer(data.name);
+        } catch (err) {
+            // console.log(err);
+        }
+    };
+
     return (
         <ListItem>
-            <ListItemButton disabled={false} selected={false}>
+            <ListItemButton
+                disabled={false}
+                selected={false}
+                onClick={handleButtonClick}
+            >
                 <ListItemDecorator>
                     <Avatar
                         color="primary"
@@ -29,11 +43,12 @@ function ProjectItem({ data }: ProjectItemProps) {
                     </Avatar>
                 </ListItemDecorator>
                 <ListItemContent>
-                    <div className="overflow-hidden pl-3">
+                    <div className="overflow-hidden px-3">
                         <Typography color="primary">{data.name}</Typography>
                         <Typography
                             color="neutral"
                             level="body-xs"
+                            noWrap
                             sx={{
                                 opacity: 0.5,
                             }}
@@ -42,6 +57,11 @@ function ProjectItem({ data }: ProjectItemProps) {
                         </Typography>
                     </div>
                 </ListItemContent>
+                <ListItemDecorator>
+                    <IconButton tooltip="Details">
+                        <EllipsisVerticalIcon className="h-6 w-6" />
+                    </IconButton>
+                </ListItemDecorator>
             </ListItemButton>
         </ListItem>
     );

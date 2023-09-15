@@ -65,15 +65,24 @@ export async function removeProjectData(id: string): Promise<void> {
 
 async function createDocuProject(
     name: string,
+    sendProjectStatus: (status: string) => void,
     toPath: string
 ): Promise<string> {
+    sendProjectStatus("Initializing files");
+    // timeout for 4 seconds to make sure the status is displayed
+    await new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, 4000);
+    });
     await execute("node -v");
-    await execute(`npx create-docusaurus@latest ${name} classic`, toPath);
+    sendProjectStatus("Installing dependencies");
     addProjectData({
         name,
         path: `${toPath}/${name}`,
         template: "classic",
     });
+    await execute(`npx create-docusaurus@latest ${name} classic`, toPath);
     return `${toPath}/${name}`;
 }
 
@@ -85,16 +94,17 @@ function createFolder(path: string) {
 
 export async function createProject(
     name: string,
+    sendProjectStatus: (status: string) => void,
     path?: string
 ): Promise<string> {
     createFolder(paths.appdata);
     createFolder(paths.projects);
     // create project at the correct path
     if (path) {
-        return createDocuProject(name, path);
+        return createDocuProject(name, sendProjectStatus, path);
     }
     if (!fs.existsSync(`${paths.projects}/${name}`)) {
-        return createDocuProject(name, paths.projects);
+        return createDocuProject(name, sendProjectStatus, paths.projects);
     }
     throw new Error("project already exists");
 }

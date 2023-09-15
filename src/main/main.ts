@@ -192,8 +192,12 @@ ipcMain.handle("get-folder-structure", async (event, arg) => {
     return folderStructure;
 });
 
+const sendProjectStatus = (status: string) => {
+    mainWindow?.webContents.send("project-status", status);
+};
+
 ipcMain.handle("create-project", (event, args) => {
-    return home.createProject(args.name, args.path);
+    return home.createProject(args.name, sendProjectStatus, args.path);
 });
 
 ipcMain.handle("start-server", (event, args) => {

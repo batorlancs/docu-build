@@ -9,11 +9,12 @@ import {
 } from "@mui/joy";
 
 export type ModalProps = {
-    title?: React.ReactNode;
-    description?: React.ReactNode;
     children: React.ReactNode;
     show: boolean;
     toggleShow: () => void;
+    title?: React.ReactNode;
+    description?: React.ReactNode;
+    closeIcon?: boolean;
     modalProps?: Omit<MuiModalProps, "open" | "onClose">;
     modalDialogProps?: ModalDialogProps;
 };
@@ -21,6 +22,7 @@ export type ModalProps = {
 function Modal({
     title,
     description,
+    closeIcon,
     children,
     show,
     toggleShow,
@@ -34,14 +36,16 @@ function Modal({
                 aria-describedby="variant-modal-description"
                 {...modalDialogProps}
             >
-                <ModalClose />
-                <Typography
-                    id="variant-modal-title"
-                    level="h4"
-                    marginBottom={2}
-                >
-                    {title}
-                </Typography>
+                {closeIcon && <ModalClose />}
+                {title && (
+                    <Typography
+                        id="variant-modal-title"
+                        level="h4"
+                        marginBottom={2}
+                    >
+                        {title}
+                    </Typography>
+                )}
                 {description && (
                     <Typography id="variant-modal-description">
                         {description}
@@ -56,6 +60,7 @@ function Modal({
 Modal.defaultProps = {
     title: undefined,
     description: undefined,
+    closeIcon: true,
     modalProps: {},
     modalDialogProps: {},
 };

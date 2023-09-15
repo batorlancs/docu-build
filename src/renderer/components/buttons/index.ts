@@ -1,2 +1,2 @@
 export { default as Button, type ButtonProps } from "./Button";
-export const temp = 0;
+export { default as IconButton, type IconButtonProps } from "./IconButton";

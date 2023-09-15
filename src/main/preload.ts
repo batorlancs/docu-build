@@ -5,7 +5,7 @@ import { createWindowOptions } from "./index";
 import { ProjectData } from "./store";
 import { SearchOptions } from "./home/home";
 
-export type Channels = "ipc-example";
+export type Channels = "ipc-example" | "project-status";
 export type InvokeChannels =
     | "get-app-path"
     | "get-files"
@@ -79,7 +79,7 @@ const electronHandler = {
                 name,
             });
         },
-        getProjects(search: SearchOptions): Promise<ProjectData[]> {
+        getProjects(search?: SearchOptions): Promise<ProjectData[]> {
             return ipcRenderer.invoke("get-projects-data", search);
         },
         removeProject(id: string): Promise<void> {

@@ -6,9 +6,8 @@ import {
     Typography,
     Avatar,
 } from "@mui/joy";
-import { IconButton } from "renderer/components/buttons";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { ProjectData } from "../../../../main/store";
+import ProjectItemMenu from "./ProjectItemMenu";
 
 type ProjectItemProps = {
     data: ProjectData;
@@ -28,7 +27,7 @@ function ProjectItem({ data }: ProjectItemProps) {
             <ListItemButton
                 disabled={false}
                 selected={false}
-                onClick={handleButtonClick}
+                // onClick={handleButtonClick}
             >
                 <ListItemDecorator>
                     <Avatar
@@ -58,9 +57,10 @@ function ProjectItem({ data }: ProjectItemProps) {
                     </div>
                 </ListItemContent>
                 <ListItemDecorator>
-                    <IconButton tooltip="Details">
+                    {/* <IconButton tooltip="Details">
                         <EllipsisVerticalIcon className="h-6 w-6" />
-                    </IconButton>
+                    </IconButton> */}
+                    <ProjectItemMenu data={data} />
                 </ListItemDecorator>
             </ListItemButton>
         </ListItem>

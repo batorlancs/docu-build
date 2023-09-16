@@ -1,10 +1,10 @@
 import React from "react";
 import {
     IconButton as MuiIconButton,
-    IconButtonProps as MuiIconButtonProps,
+    type IconButtonProps as MuiIconButtonProps,
     Tooltip,
     TooltipProps,
-} from "@mui/joy";
+} from "@mui/material";
 
 export type IconButtonProps = {
     tooltip?: string;
@@ -26,7 +26,6 @@ function IconButton({
 IconButton.defaultProps = {
     tooltip: undefined,
     tooltipProps: {
-        variant: "solid",
         arrow: true,
     },
 };

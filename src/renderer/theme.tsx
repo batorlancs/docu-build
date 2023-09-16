@@ -1,6 +1,10 @@
-import { extendTheme } from "@mui/joy/styles";
+import { extendTheme as joyExtendTheme } from "@mui/joy/styles";
+import {
+    experimental_extendTheme as materialExtendTheme,
+    type ThemeOptions as MuiThemeOptions,
+} from "@mui/material/styles";
 
-const theme = extendTheme({
+const joyThemeOptions = {
     colorSchemes: {
         light: {
             palette: {
@@ -59,6 +63,24 @@ const theme = extendTheme({
             },
         },
     },
-});
+};
 
-export default theme;
+const muiThemeOptions: MuiThemeOptions = {
+    palette: {
+        mode: "dark",
+        primary: {
+            main: "#818cf8",
+        },
+        secondary: {
+            main: "#85d8e2",
+        },
+    },
+    typography: {
+        fontFamily: "Inter",
+    },
+};
+
+const joyTheme = joyExtendTheme(joyThemeOptions);
+const materialTheme = materialExtendTheme(muiThemeOptions);
+
+export { joyTheme, materialTheme };

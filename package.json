@@ -101,6 +101,7 @@
         "@fontsource/inter": "^5.0.8",
         "@heroicons/react": "^2.0.18",
         "@mui/joy": "^5.0.0-beta.2",
+        "@mui/material": "^5.14.9",
         "electron-debug": "^3.2.0",
         "electron-log": "^4.4.8",
         "electron-store": "^8.1.0",

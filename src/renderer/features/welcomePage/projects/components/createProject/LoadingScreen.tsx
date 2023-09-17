@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LinearProgress, Typography } from "@mui/joy";
 import { NotClosableModal } from "renderer/components/modals";
 
@@ -10,10 +10,15 @@ type LoadingScreenProps = {
 function LoadingScreen({ show, value }: LoadingScreenProps) {
     const [statusMsg, setStatusMsg] = React.useState<string>("");
 
-    window.electron?.ipcRenderer.once("project-status", (args) => {
-        // console.log("%c project status", "color: lime;", args);
-        setStatusMsg(args as string);
-    });
+    useEffect(() => {
+        window.electron.ipcRenderer.on("project-status", (args) => {
+            setStatusMsg(args as string);
+        });
+
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners("project-status");
+        };
+    }, []);
 
     return (
         <NotClosableModal show={show}>

@@ -23,11 +23,16 @@ function ProjectItem({ data }: ProjectItemProps) {
     };
 
     return (
-        <ListItem>
+        <ListItem endAction={<ProjectItemMenu data={data} />}>
             <ListItemButton
                 disabled={false}
                 selected={false}
-                // onClick={handleButtonClick}
+                onClick={handleButtonClick}
+                sx={{
+                    "&:hover": {
+                        backgroundColor: "transparent",
+                    },
+                }}
             >
                 <ListItemDecorator>
                     <Avatar
@@ -56,12 +61,6 @@ function ProjectItem({ data }: ProjectItemProps) {
                         </Typography>
                     </div>
                 </ListItemContent>
-                <ListItemDecorator>
-                    {/* <IconButton tooltip="Details">
-                        <EllipsisVerticalIcon className="h-6 w-6" />
-                    </IconButton> */}
-                    <ProjectItemMenu data={data} />
-                </ListItemDecorator>
             </ListItemButton>
         </ListItem>
     );

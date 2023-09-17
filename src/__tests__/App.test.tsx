@@ -12,11 +12,23 @@ global.matchMedia =
         };
     });
 
+// mock window.electron.ipcRenderer
+window.electron = {
+    ipcRenderer: {
+        on: jest.fn(),
+        once: jest.fn(),
+        invoke: jest.fn(),
+        sendMessage: jest.fn(),
+        removeAllListeners: jest.fn(),
+        getProjects: jest.fn(),
+        removeProject: jest.fn(),
+        createProject: jest.fn(),
+        startServer: jest.fn(),
+    },
+};
+
 describe("App", () => {
     it("should render", () => {
         expect(render(<App />)).toBeTruthy();
     });
-    // it("test here", () => {
-    //     expect(1).toBe(1);
-    // });
 });

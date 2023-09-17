@@ -1,5 +1,11 @@
 import { ProjectData } from "main/store";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import {
+    EllipsisVerticalIcon,
+    TrashIcon,
+    ServerIcon,
+    FolderIcon,
+    CommandLineIcon,
+} from "@heroicons/react/24/outline";
 import { IconButtonWithMenu } from "renderer/components/buttons";
 
 type ProjectItemMenuProps = {
@@ -7,21 +13,53 @@ type ProjectItemMenuProps = {
 };
 
 function ProjectItemMenu({ data }: ProjectItemMenuProps) {
+    const handleDelete = async () => {
+        try {
+            await window.electron.ipcRenderer.removeProject(data.id);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <IconButtonWithMenu
-            icon={<EllipsisVerticalIcon className="h-6 w-6" />}
+            icon={<EllipsisVerticalIcon />}
             menuList={[
                 {
-                    label: "Details",
-                    icon: <EllipsisVerticalIcon />,
+                    label: "Open in file explorer",
+                    icon: <FolderIcon />,
                     onClick: () => {},
+                },
+                {
+                    label: "Open in terminal",
+                    icon: <CommandLineIcon />,
+                    onClick: () => {},
+                    menuItemProps: {
+                        divider: true,
+                    },
+                },
+                {
+                    label: "Start server",
+                    icon: <ServerIcon />,
+                    onClick: () => {},
+                    menuItemProps: {
+                        divider: true,
+                    },
                 },
                 {
                     label: "Delete",
-                    icon: <EllipsisVerticalIcon />,
-                    onClick: () => {},
+                    icon: <TrashIcon />,
+                    onClick: handleDelete,
+                    menuItemProps: {
+                        sx: {
+                            color: "error.main",
+                        },
+                    },
                 },
             ]}
+            buttonSx={{
+                marginRight: "8px",
+            }}
         />
     );
 }

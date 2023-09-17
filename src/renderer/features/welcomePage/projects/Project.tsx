@@ -12,6 +12,16 @@ function Project() {
     const [error, setError] = useState<string>("");
 
     useEffect(() => {
+        window.electron.ipcRenderer.on("projects-changed", (newData) => {
+            setProjects(newData as ProjectData[]);
+        });
+
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners("projects-changed");
+        };
+    }, []);
+
+    useEffect(() => {
         const getProjects = async (): Promise<ProjectData[]> => {
             try {
                 return window.electron.ipcRenderer.getProjects({

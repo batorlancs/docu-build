@@ -116,15 +116,6 @@ function CreateProject() {
                 show={
                     isCreatingProject !== "" && isCreatingProject !== "[done]"
                 }
-                // label={
-                //     <Typography color="neutral">
-                //         Creating{" "}
-                //         <Typography color="primary">
-                //             {isCreatingProject}
-                //         </Typography>
-                //         …
-                //     </Typography>
-                // }
                 value={40}
             />
         </>

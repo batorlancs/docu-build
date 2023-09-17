@@ -16,9 +16,9 @@ import * as fs from "fs";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
-import * as home from "./home/home";
+import { setHomeIpcHandlers } from "./home/home";
 
-const DEFAULT_WIDTH = 800;
+const DEFAULT_WIDTH = 1200;
 const DEFAULT_HEIGHT = 600;
 
 class AppUpdater {
@@ -30,16 +30,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.handle("get-app-path", async () => {
-    return app.getAppPath();
-});
-
-ipcMain.on("ipc-example", async (event, arg) => {
-    const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-    console.log(msgTemplate(arg));
-    event.reply("ipc-example", msgTemplate("pong"));
-});
+export const getMainWindow = () => mainWindow;
 
 if (process.env.NODE_ENV === "production") {
     const sourceMapSupport = require("source-map-support");
@@ -130,24 +121,22 @@ const createWindow = async (options?: createWindowOptions) => {
     new AppUpdater();
 };
 
-ipcMain.on("close-window", async () => {
-    if (mainWindow) {
-        mainWindow.close();
-    }
-});
-
-ipcMain.on("set-window-size", (_, arg) => {
-    const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = arg as {
-        width: number;
-        height: number;
-    };
-    if (mainWindow) {
-        mainWindow.setSize(width, height);
-    }
-});
-
 /**
  * Add event listeners...
+ */
+
+// ipcMain.handle("get-app-path", async () => {
+//     return app.getAppPath();
+// });
+
+// ipcMain.on("ipc-example", async (event, arg) => {
+//     const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//     console.log(msgTemplate(arg));
+//     event.reply("ipc-example", msgTemplate("pong"));
+// });
+
+/**
+ * Window handlers
  */
 
 app.on("window-all-closed", () => {
@@ -169,8 +158,24 @@ app.whenReady()
     })
     .catch(console.log);
 
+ipcMain.on("close-window", async () => {
+    if (mainWindow) {
+        mainWindow.close();
+    }
+});
+
+ipcMain.on("set-window-size", (_, arg) => {
+    const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = arg as {
+        width: number;
+        height: number;
+    };
+    if (mainWindow) {
+        mainWindow.setSize(width, height);
+    }
+});
+
 /**
- * handlers
+ * File Handlers
  */
 
 ipcMain.handle("get-files", async () => {
@@ -192,22 +197,4 @@ ipcMain.handle("get-folder-structure", async (event, arg) => {
     return folderStructure;
 });
 
-const sendProjectStatus = (status: string) => {
-    mainWindow?.webContents.send("project-status", status);
-};
-
-ipcMain.handle("create-project", (event, args) => {
-    return home.createProject(args.name, sendProjectStatus, args.path);
-});
-
-ipcMain.handle("start-server", (event, args) => {
-    return home.startServer(args.name);
-});
-
-ipcMain.handle("get-projects-data", (event, args) => {
-    return home.getProjectsData(args);
-});
-
-ipcMain.handle("remove-project-data", (event, args) => {
-    return home.removeProjectData(args);
-});
+setHomeIpcHandlers();

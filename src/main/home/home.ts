@@ -1,5 +1,7 @@
 import * as fs from "fs";
+import { ipcMain } from "electron";
 import { v4 as uuidv4 } from "uuid";
+import { getMainWindow } from "../main";
 import {
     execute,
     generateColor,
@@ -12,6 +14,10 @@ import { store, ProjectData } from "../store";
 export type SearchOptions = {
     name?: string;
     path?: string;
+};
+
+const sendProjectStatus = (status: string) => {
+    getMainWindow()?.webContents.send("project-status", status);
 };
 
 export function getProjectsData(search?: SearchOptions): ProjectData[] {
@@ -63,9 +69,12 @@ export async function removeProjectData(id: string): Promise<void> {
     store.set("projects", projectsData);
 }
 
+store.onDidChange("projects", (projects) => {
+    getMainWindow()?.webContents.send("projects-changed", projects);
+});
+
 async function createDocuProject(
     name: string,
-    sendProjectStatus: (status: string) => void,
     toPath: string
 ): Promise<string> {
     sendProjectStatus("Initializing files");
@@ -94,17 +103,16 @@ function createFolder(path: string) {
 
 export async function createProject(
     name: string,
-    sendProjectStatus: (status: string) => void,
     path?: string
 ): Promise<string> {
     createFolder(paths.appdata);
     createFolder(paths.projects);
     // create project at the correct path
     if (path) {
-        return createDocuProject(name, sendProjectStatus, path);
+        return createDocuProject(name, path);
     }
     if (!fs.existsSync(`${paths.projects}/${name}`)) {
-        return createDocuProject(name, sendProjectStatus, paths.projects);
+        return createDocuProject(name, paths.projects);
     }
     throw new Error("project already exists");
 }
@@ -119,4 +127,22 @@ export async function startServer(name: string): Promise<void> {
             throw new Error("failed to start server");
         }
     }
+}
+
+export function setHomeIpcHandlers(): void {
+    ipcMain.handle("create-project", (event, args) => {
+        return createProject(args.name, args.path);
+    });
+
+    ipcMain.handle("start-server", (event, args) => {
+        return startServer(args.name);
+    });
+
+    ipcMain.handle("get-projects-data", (event, args) => {
+        return getProjectsData(args);
+    });
+
+    ipcMain.handle("remove-project-data", (event, args) => {
+        return removeProjectData(args);
+    });
 }

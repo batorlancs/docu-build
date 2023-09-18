@@ -2,6 +2,10 @@ import * as fs from "fs";
 import { store } from "../store";
 import { getProjectsData } from "./home";
 
+/**
+ * removes a project from the projects data store
+ * @param id id of the project to remove
+ */
 async function removeProjectData(id: string): Promise<void> {
     const projectsData = getProjectsData();
     const index = projectsData.findIndex((project) => project.id === id);
@@ -13,6 +17,10 @@ async function removeProjectData(id: string): Promise<void> {
     store.set("projects", projectsData);
 }
 
+/**
+ * removes a project from the projects folder
+ * @param id id of the project to remove
+ */
 export const removeProject = async (id: string): Promise<void> => {
     // get project path
     const projectsData = getProjectsData();

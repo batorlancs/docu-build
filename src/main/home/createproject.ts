@@ -13,9 +13,14 @@ export const sendProjectStatus = (status: string) => {
 let projectStatusChecker: NodeJS.Timeout | undefined;
 let projectStatusCheckerLoopCount: number = 0;
 
-const checkProjectStatus = (name: string, path: string) => {
+/**
+ * checks the status of the project creation, sends updates to the renderer process
+ * @param name name of the project
+ * @param path path to create the project at
+ */
+const checkProjectStatus = (name: string, path: string): void => {
     projectStatusCheckerLoopCount += 1;
-    if (projectStatusCheckerLoopCount > 30) {
+    if (projectStatusCheckerLoopCount > 45) {
         sendProjectStatus("Something went wrong");
         clearInterval(projectStatusChecker);
         projectStatusCheckerLoopCount = 0;

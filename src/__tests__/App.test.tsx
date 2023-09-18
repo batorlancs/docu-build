@@ -18,12 +18,8 @@ window.electron = {
         on: jest.fn(),
         once: jest.fn(),
         invoke: jest.fn(),
-        sendMessage: jest.fn(),
+        send: jest.fn(),
         removeAllListeners: jest.fn(),
-        getProjects: jest.fn(),
-        removeProject: jest.fn(),
-        createProject: jest.fn(),
-        startServer: jest.fn(),
     },
 };
 

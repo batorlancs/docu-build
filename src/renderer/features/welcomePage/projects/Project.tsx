@@ -24,9 +24,12 @@ function Project() {
     useEffect(() => {
         const getProjects = async (): Promise<ProjectData[]> => {
             try {
-                return window.electron.ipcRenderer.getProjects({
-                    name: search,
-                });
+                return (await window.electron.ipcRenderer.invoke(
+                    "get-projects",
+                    {
+                        name: search,
+                    }
+                )) as ProjectData[];
             } catch (err) {
                 return [];
             }

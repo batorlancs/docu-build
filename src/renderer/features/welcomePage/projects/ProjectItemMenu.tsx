@@ -14,16 +14,28 @@ type ProjectItemMenuProps = {
 function ProjectItemMenu({ data }: ProjectItemMenuProps) {
     const handleDelete = async () => {
         try {
-            await window.electron.ipcRenderer.removeProject(data.id);
+            await window.electron.ipcRenderer.invoke("remove-project", {
+                id: data.id,
+            });
         } catch (err) {
             console.log(err);
         }
     };
 
-    const handleOpenInFileExplorer = async () => {
-        window.electron.ipcRenderer.sendMessage("open-in-file-explorer", {
+    const handleOpenInFileExplorer = () => {
+        window.electron.ipcRenderer.send("open-in-file-explorer", {
             path: data.path,
         });
+    };
+
+    const handleStartServer = async () => {
+        try {
+            await window.electron.ipcRenderer.invoke("start-server", {
+                name: data.name,
+            });
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (
@@ -38,7 +50,7 @@ function ProjectItemMenu({ data }: ProjectItemMenuProps) {
                 {
                     label: "Start server",
                     icon: <ServerIcon />,
-                    onClick: () => {},
+                    onClick: handleStartServer,
                     menuItemProps: {
                         divider: true,
                     },

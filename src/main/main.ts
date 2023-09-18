@@ -9,10 +9,9 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from "path";
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
-import * as fs from "fs";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
@@ -159,44 +158,8 @@ app.whenReady()
     })
     .catch(console.log);
 
-ipcMain.on("close-window", async () => {
-    if (mainWindow) {
-        mainWindow.close();
-    }
-});
-
-ipcMain.on("set-window-size", (_, arg) => {
-    const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = arg as {
-        width: number;
-        height: number;
-    };
-    if (mainWindow) {
-        mainWindow.setSize(width, height);
-    }
-});
-
 /**
  * File Handlers
  */
-
-ipcMain.handle("get-files", async () => {
-    const files = fs.readdirSync(app.getAppPath());
-    return files;
-});
-
-ipcMain.handle("get-file", async (event, arg) => {
-    const file = fs.readFileSync(`${app.getAppPath()}/${arg}`);
-    return file;
-});
-
-ipcMain.handle("create-folder", async (event, arg) => {
-    fs.mkdirSync(`${app.getAppPath()}/${arg}`);
-});
-
-ipcMain.handle("get-folder-structure", async (event, arg) => {
-    const folderStructure = fs.readdirSync(`${app.getAppPath()}/${arg}`);
-    return folderStructure;
-});
-
 setHomeIpcHandlers();
 setFileIpcHandlers();

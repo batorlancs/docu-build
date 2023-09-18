@@ -11,6 +11,7 @@ import {
 import { paths } from "../globals";
 import { store, ProjectData } from "../store";
 import { createProject } from "./createproject";
+import { removeProject } from "./removeproject";
 
 export type SearchOptions = {
     name?: string;
@@ -55,33 +56,6 @@ export const addProjectData = (
     store.set("projects", projectsData);
 };
 
-export async function removeProjectData(id: string): Promise<void> {
-    const projectsData = getProjectsData();
-    const index = projectsData.findIndex((project) => project.id === id);
-    if (index !== -1) {
-        projectsData.splice(index, 1);
-    } else {
-        throw new Error("project data does not exist");
-    }
-    store.set("projects", projectsData);
-}
-
-const removeProject = async (id: string): Promise<void> => {
-    // get project path
-    const projectsData = getProjectsData();
-    const project = projectsData.find((item) => item.id === id);
-    if (!project) {
-        throw new Error("project does not exist");
-    }
-    // remove folder at path
-    fs.rmdir(project.path, { recursive: true }, async (err) => {
-        await removeProjectData(id);
-        if (err) {
-            throw new Error(`Error removing folder: ${err.message}`);
-        }
-    });
-};
-
 store.onDidChange("projects", (projects) => {
     getMainWindow()?.webContents.send("projects-changed", projects);
 });
@@ -100,18 +74,25 @@ export async function startServer(name: string): Promise<void> {
 
 export function setHomeIpcHandlers(): void {
     ipcMain.handle("create-project", (event, args) => {
-        return createProject(args.name, args.path);
+        const { name, path } = args as { name: string; path?: string };
+        return createProject(name, path);
     });
 
     ipcMain.handle("start-server", (event, args) => {
-        return startServer(args.name);
+        const { name } = args as { name: string };
+        return startServer(name);
     });
 
-    ipcMain.handle("get-projects-data", (event, args) => {
-        return getProjectsData(args);
+    ipcMain.handle("get-projects", (event, args) => {
+        const { name, path } = (args as { name?: string; path?: string }) ?? {};
+        return getProjectsData({
+            name,
+            path,
+        });
     });
 
-    ipcMain.handle("remove-project-data", (event, args) => {
-        return removeProject(args);
+    ipcMain.handle("remove-project", (event, args) => {
+        const { id } = args as { id: string };
+        return removeProject(id);
     });
 }

@@ -20,9 +20,9 @@ function LoadingScreen({ show, value }: LoadingScreenProps) {
     }, [show]);
 
     useEffect(() => {
-        window.electron.ipcRenderer.on("project-status", (args) => {
-            console.log("got project status:", args);
-            setStatusMsg(args as string);
+        window.electron.ipcRenderer.on("project-status", (msg) => {
+            console.log("got project status:", msg);
+            setStatusMsg(msg as string);
         });
 
         return () => {

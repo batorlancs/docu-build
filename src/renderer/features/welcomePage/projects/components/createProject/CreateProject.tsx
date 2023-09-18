@@ -3,20 +3,8 @@ import { ModalWithButton } from "renderer/components/modals";
 import { Formik, Form, FormikProps } from "formik";
 import { FormButton, TextInput } from "renderer/components/forms";
 import * as yup from "yup";
+import { ProjectData } from "main/store";
 import LoadingScreen from "./LoadingScreen";
-
-// const startServer = (name: string) => {
-//     console.log("STARTING SERVER", name);
-//     window.electron.ipcRenderer
-//         .startServer(name)
-//         .then(() => {
-//             console.log("STARTED SERVER");
-//             return null;
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//         });
-// };
 
 const FORM_INITIALS = {
     projectName: "",
@@ -37,7 +25,9 @@ const VALIDATION_SCHEMA = yup.object({
         )
         .test("isUnique", "Project name already exists.", async (value) => {
             const projectNames = (
-                await window.electron.ipcRenderer.getProjects()
+                (await window.electron.ipcRenderer.invoke(
+                    "get-projects"
+                )) as ProjectData[]
             ).map((p) => p.name);
             return !projectNames.includes(value);
         }),
@@ -52,7 +42,9 @@ function CreateProject() {
         // console.log("CREATING PROJECT", name);
         setIsCreatingProject(name);
         window.electron.ipcRenderer
-            .createProject(name)
+            .invoke("create-project", {
+                name,
+            })
             .then(() => {
                 // console.log("CREATED PROJECT", res);
                 setIsCreatingProject("[done]");

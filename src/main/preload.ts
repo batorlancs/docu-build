@@ -1,27 +1,23 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-// import { createWindowOptions } from "./index";
-import { ProjectData } from "./store";
-import { SearchOptions } from "./home/home";
 
 export type Channels =
     | "ipc-example"
     | "project-status"
     | "projects-changed"
-    | "open-in-file-explorer"
-    | "open-in-terminal";
+    | "open-in-file-explorer";
+
 export type InvokeChannels =
     | "get-app-path"
-    | "get-files"
-    | "get-file"
-    | "create-folder"
-    | "get-folder-structure"
-    | "create-project";
+    | "create-project"
+    | "start-server"
+    | "get-projects"
+    | "remove-project";
 
 const electronHandler = {
     ipcRenderer: {
-        sendMessage(channel: Channels, ...args: unknown[]) {
+        send(channel: Channels, ...args: unknown[]) {
             ipcRenderer.send(channel, ...args);
         },
         on(channel: Channels, func: (...args: unknown[]) => void) {
@@ -43,52 +39,6 @@ const electronHandler = {
         },
         removeAllListeners(channel: Channels) {
             ipcRenderer.removeAllListeners(channel);
-        },
-        // getAppPath(): Promise<string> {
-        //     return ipcRenderer.invoke("get-app-path");
-        // },
-        // openNewWindow(options: createWindowOptions): Promise<void> {
-        //     return new Promise((resolve, reject) => {
-        //         ipcRenderer
-        //             .invoke("open-new-window", options)
-        //             .then((res) => {
-        //                 if (res) {
-        //                     resolve();
-        //                 } else {
-        //                     reject();
-        //                 }
-        //                 return true;
-        //             })
-        //             .catch((err) => {
-        //                 reject(err);
-        //             });
-        //     });
-        // },
-        // closeWindow(): void {
-        //     ipcRenderer.send("close-window");
-        // },
-        // setWindowSize(width: number, height: number): void {
-        //     ipcRenderer.send("set-window-size", {
-        //         width,
-        //         height,
-        //     });
-        // },
-        createProject(name: string, path?: string): Promise<string> {
-            return ipcRenderer.invoke("create-project", {
-                name,
-                path,
-            });
-        },
-        startServer(name: string): Promise<string> {
-            return ipcRenderer.invoke("start-server", {
-                name,
-            });
-        },
-        getProjects(search?: SearchOptions): Promise<ProjectData[]> {
-            return ipcRenderer.invoke("get-projects-data", search);
-        },
-        removeProject(id: string): Promise<void> {
-            return ipcRenderer.invoke("remove-project-data", id);
         },
     },
 };

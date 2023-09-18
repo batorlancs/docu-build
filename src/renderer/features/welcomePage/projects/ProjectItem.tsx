@@ -14,20 +14,11 @@ type ProjectItemProps = {
 };
 
 function ProjectItem({ data }: ProjectItemProps) {
-    const handleButtonClick = () => {
-        try {
-            window.electron.ipcRenderer.startServer(data.name);
-        } catch (err) {
-            // console.log(err);
-        }
-    };
-
     return (
         <ListItem endAction={<ProjectItemMenu data={data} />}>
             <ListItemButton
                 disabled={false}
                 selected={false}
-                onClick={handleButtonClick}
                 sx={{
                     "&:hover": {
                         backgroundColor: "transparent",

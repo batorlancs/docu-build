@@ -8,7 +8,8 @@ export const createFolder = (path: string) => {
 };
 
 export const setFileIpcHandlers = () => {
-    ipcMain.on("open-file-in-explorer", (_, args) => {
+    ipcMain.on("open-file-in-explorer", (event, args) => {
+        console.error("open-file-in-explorer", args);
         const { path } = args as { path: string };
         if (fs.existsSync(path)) {
             shell.openExternal(path);

@@ -5,7 +5,12 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { ProjectData } from "./store";
 import { SearchOptions } from "./home/home";
 
-export type Channels = "ipc-example" | "project-status" | "projects-changed";
+export type Channels =
+    | "ipc-example"
+    | "project-status"
+    | "projects-changed"
+    | "open-in-file-explorer"
+    | "open-in-terminal";
 export type InvokeChannels =
     | "get-app-path"
     | "get-files"

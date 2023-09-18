@@ -1,4 +1,5 @@
 import Store from "electron-store";
+import { paths } from "./globals";
 import { generateColor } from "./util";
 
 export type ProjectData = {
@@ -25,7 +26,7 @@ export const store = new Store<StoreType>({
             {
                 id: "1",
                 name: "test",
-                path: "testpath/very/long/path",
+                path: `${paths.projects}/test`,
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -38,7 +39,7 @@ export const store = new Store<StoreType>({
             {
                 id: "2",
                 name: "test2",
-                path: "testpath/very/long/path",
+                path: `${paths.projects}/test2`,
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -51,7 +52,7 @@ export const store = new Store<StoreType>({
             {
                 id: "3",
                 name: "test3",
-                path: "testpath/very/long/path",
+                path: `${paths.projects}/test3`,
                 template: "classic",
                 createdAt: new Date(),
                 updatedAt: new Date(),

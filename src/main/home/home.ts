@@ -10,17 +10,14 @@ import {
 } from "../util";
 import { paths } from "../globals";
 import { store, ProjectData } from "../store";
+import { createProject } from "./createproject";
 
 export type SearchOptions = {
     name?: string;
     path?: string;
 };
 
-const sendProjectStatus = (status: string) => {
-    getMainWindow()?.webContents.send("project-status", status);
-};
-
-export function getProjectsData(search?: SearchOptions): ProjectData[] {
+export const getProjectsData = (search?: SearchOptions): ProjectData[] => {
     const projects = store.get("projects");
     if (search && search.name) {
         return projects.filter((project) => {
@@ -33,11 +30,11 @@ export function getProjectsData(search?: SearchOptions): ProjectData[] {
         });
     }
     return projects;
-}
+};
 
-function addProjectData(
+export const addProjectData = (
     data: Omit<ProjectData, "id" | "createdAt" | "updatedAt" | "avatar">
-): void {
+): void => {
     const projectsData = getProjectsData();
     // if name is already taken do nothing
     if (projectsData.find((project) => project.name === data.name)) {
@@ -56,7 +53,7 @@ function addProjectData(
         ...data,
     });
     store.set("projects", projectsData);
-}
+};
 
 export async function removeProjectData(id: string): Promise<void> {
     const projectsData = getProjectsData();
@@ -64,58 +61,30 @@ export async function removeProjectData(id: string): Promise<void> {
     if (index !== -1) {
         projectsData.splice(index, 1);
     } else {
-        throw new Error("project does not exist");
+        throw new Error("project data does not exist");
     }
     store.set("projects", projectsData);
 }
 
+const removeProject = async (id: string): Promise<void> => {
+    // get project path
+    const projectsData = getProjectsData();
+    const project = projectsData.find((item) => item.id === id);
+    if (!project) {
+        throw new Error("project does not exist");
+    }
+    // remove folder at path
+    fs.rmdir(project.path, { recursive: true }, async (err) => {
+        await removeProjectData(id);
+        if (err) {
+            throw new Error(`Error removing folder: ${err.message}`);
+        }
+    });
+};
+
 store.onDidChange("projects", (projects) => {
     getMainWindow()?.webContents.send("projects-changed", projects);
 });
-
-async function createDocuProject(
-    name: string,
-    toPath: string
-): Promise<string> {
-    sendProjectStatus("Initializing files");
-    // timeout for 4 seconds to make sure the status is displayed
-    await new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, 4000);
-    });
-    await execute("node -v");
-    sendProjectStatus("Installing dependencies");
-    addProjectData({
-        name,
-        path: `${toPath}/${name}`,
-        template: "classic",
-    });
-    await execute(`npx create-docusaurus@latest ${name} classic`, toPath);
-    return `${toPath}/${name}`;
-}
-
-function createFolder(path: string) {
-    if (!fs.existsSync(path)) {
-        fs.mkdirSync(path);
-    }
-}
-
-export async function createProject(
-    name: string,
-    path?: string
-): Promise<string> {
-    createFolder(paths.appdata);
-    createFolder(paths.projects);
-    // create project at the correct path
-    if (path) {
-        return createDocuProject(name, path);
-    }
-    if (!fs.existsSync(`${paths.projects}/${name}`)) {
-        return createDocuProject(name, paths.projects);
-    }
-    throw new Error("project already exists");
-}
 
 export async function startServer(name: string): Promise<void> {
     if (!fs.existsSync(`${paths.projects}/${name}`)) {
@@ -143,6 +112,6 @@ export function setHomeIpcHandlers(): void {
     });
 
     ipcMain.handle("remove-project-data", (event, args) => {
-        return removeProjectData(args);
+        return removeProject(args);
     });
 }

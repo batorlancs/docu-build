@@ -17,6 +17,7 @@ import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
 import { setHomeIpcHandlers } from "./home/home";
+import { setFileIpcHandlers } from "./file/file";
 
 const DEFAULT_WIDTH = 1200;
 const DEFAULT_HEIGHT = 600;
@@ -198,3 +199,4 @@ ipcMain.handle("get-folder-structure", async (event, arg) => {
 });
 
 setHomeIpcHandlers();
+setFileIpcHandlers();

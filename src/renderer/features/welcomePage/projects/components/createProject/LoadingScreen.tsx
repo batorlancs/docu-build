@@ -7,11 +7,21 @@ type LoadingScreenProps = {
     value: number;
 };
 
+const DEFAULT_STATUS_MSG = "Executing commands";
+
 function LoadingScreen({ show, value }: LoadingScreenProps) {
-    const [statusMsg, setStatusMsg] = React.useState<string>("");
+    const [statusMsg, setStatusMsg] =
+        React.useState<string>(DEFAULT_STATUS_MSG);
+
+    useEffect(() => {
+        if (show) {
+            setStatusMsg(DEFAULT_STATUS_MSG);
+        }
+    }, [show]);
 
     useEffect(() => {
         window.electron.ipcRenderer.on("project-status", (args) => {
+            console.log("got project status:", args);
             setStatusMsg(args as string);
         });
 

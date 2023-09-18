@@ -4,7 +4,6 @@ import {
     TrashIcon,
     ServerIcon,
     FolderIcon,
-    CommandLineIcon,
 } from "@heroicons/react/24/outline";
 import { IconButtonWithMenu } from "renderer/components/buttons";
 
@@ -21,6 +20,12 @@ function ProjectItemMenu({ data }: ProjectItemMenuProps) {
         }
     };
 
+    const handleOpenInFileExplorer = async () => {
+        window.electron.ipcRenderer.sendMessage("open-in-file-explorer", {
+            path: data.path,
+        });
+    };
+
     return (
         <IconButtonWithMenu
             icon={<EllipsisVerticalIcon />}
@@ -28,15 +33,7 @@ function ProjectItemMenu({ data }: ProjectItemMenuProps) {
                 {
                     label: "Open in file explorer",
                     icon: <FolderIcon />,
-                    onClick: () => {},
-                },
-                {
-                    label: "Open in terminal",
-                    icon: <CommandLineIcon />,
-                    onClick: () => {},
-                    menuItemProps: {
-                        divider: true,
-                    },
+                    onClick: handleOpenInFileExplorer,
                 },
                 {
                     label: "Start server",

@@ -88,7 +88,6 @@ export async function createProject(
         () => checkProjectStatus(name, path || paths.projects),
         2000
     );
-    createFolder(paths.appdata);
     createFolder(paths.projects);
     // create project at the correct path
     if (path) {

@@ -75,6 +75,7 @@ export async function startServer(name: string): Promise<void> {
 export function setHomeIpcHandlers(): void {
     ipcMain.handle("create-project", (event, args) => {
         const { name, path } = args as { name: string; path?: string };
+        console.log("create-project", name, path);
         return createProject(name, path);
     });
 

@@ -1,11 +1,9 @@
 import { app } from "electron";
+import { store } from "./store";
 
 const appPath = app.getAppPath();
 
 export const paths = {
     app: appPath,
-    appdata: `${appPath}/appdata`,
-    projects: `${appPath}/appdata/projects`,
+    projects: store.get("userdata").projectsPath,
 };
-
-export const files = {};

@@ -4,6 +4,8 @@ module.exports = {
     rules: {
         // A temporary hack related to IDE not resolving correct package.json
         "import/no-extraneous-dependencies": "off",
+        "import/no-cycle": "off",
+        "import/prefer-default-export": "off",
         "react/react-in-jsx-scope": "off",
         "react/jsx-filename-extension": "off",
         "import/extensions": "off",
@@ -13,6 +15,7 @@ module.exports = {
         "@typescript-eslint/no-shadow": "error",
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "error",
+        "react/jsx-props-no-spreading": "off",
     },
     parserOptions: {
         ecmaVersion: 2020,

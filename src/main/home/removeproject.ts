@@ -29,7 +29,7 @@ export const removeProject = async (id: string): Promise<void> => {
         throw new Error("project does not exist");
     }
     // remove folder at path
-    fs.rmdir(project.path, { recursive: true }, async (err1) => {
+    fs.rm(project.path, { recursive: true }, async (err1) => {
         try {
             await removeProjectData(id);
             if (err1) {

@@ -1,21 +1,19 @@
 import React from "react";
-import { ModalWithButton } from "renderer/components/modals";
+import { Button } from "renderer/components/buttons";
 
 function OpenProject() {
+    const handleOpen = async () => {
+        try {
+            await window.electron.ipcRenderer.invoke("open-project");
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
+
     return (
-        <ModalWithButton
-            buttonProps={{
-                color: "neutral",
-                variant: "soft",
-                children: "Open",
-            }}
-            modalProps={{
-                title: "Open project",
-                description: "Create a new project",
-            }}
-        >
-            {/* something for children */}
-        </ModalWithButton>
+        <Button variant="soft" color="neutral" onClick={handleOpen}>
+            Open
+        </Button>
     );
 }
 

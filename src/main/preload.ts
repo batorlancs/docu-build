@@ -6,6 +6,7 @@ export type Channels =
     | "ipc-example"
     | "project-status"
     | "projects-changed"
+    | "userdata-changed"
     | "open-in-file-explorer";
 
 export type InvokeChannels =
@@ -13,7 +14,10 @@ export type InvokeChannels =
     | "create-project"
     | "start-server"
     | "get-projects"
-    | "remove-project";
+    | "get-userdata"
+    | "remove-project"
+    | "open-project"
+    | "select-projects-path";
 
 const electronHandler = {
     ipcRenderer: {

@@ -8,10 +8,11 @@ import {
     generatePrefixFromName,
     getTextColorForBackground,
 } from "../util";
-import { paths } from "../globals";
 import { store, ProjectData } from "../store";
 import { createProject } from "./createproject";
 import { removeProject } from "./removeproject";
+import { openProject } from "./openproject";
+import { selectProjectsPath } from "./preferences";
 
 export type SearchOptions = {
     name?: string;
@@ -60,12 +61,17 @@ store.onDidChange("projects", (projects) => {
     getMainWindow()?.webContents.send("projects-changed", projects);
 });
 
+store.onDidChange("userdata", (userdata) => {
+    getMainWindow()?.webContents.send("userdata-changed", userdata);
+});
+
 export async function startServer(name: string): Promise<void> {
-    if (!fs.existsSync(`${paths.projects}/${name}`)) {
+    const { projectsPath } = store.get("userdata");
+    if (!fs.existsSync(`${projectsPath}/${name}`)) {
         throw new Error("project does not exist");
     } else {
         try {
-            await execute("npm run start", `${paths.projects}/${name}`);
+            await execute("npm run start", `${projectsPath}/${name}`);
         } catch (err) {
             throw new Error("failed to start server");
         }
@@ -75,7 +81,6 @@ export async function startServer(name: string): Promise<void> {
 export function setHomeIpcHandlers(): void {
     ipcMain.handle("create-project", (event, args) => {
         const { name, path } = args as { name: string; path?: string };
-        console.log("create-project", name, path);
         return createProject(name, path);
     });
 
@@ -95,5 +100,17 @@ export function setHomeIpcHandlers(): void {
     ipcMain.handle("remove-project", (event, args) => {
         const { id } = args as { id: string };
         return removeProject(id);
+    });
+
+    ipcMain.handle("open-project", () => {
+        return openProject();
+    });
+
+    ipcMain.handle("get-userdata", () => {
+        return store.get("userdata");
+    });
+
+    ipcMain.handle("select-projects-path", () => {
+        return selectProjectsPath();
     });
 }

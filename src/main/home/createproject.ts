@@ -3,7 +3,7 @@ import { getMainWindow } from "../main";
 import { createFolder } from "../file/file";
 import { execute } from "../util";
 import { addProjectData } from "./home";
-import { paths } from "../globals";
+import { store } from "../store";
 
 export const sendProjectStatus = (status: string) => {
     getMainWindow()?.webContents.send("project-status", status);
@@ -59,13 +59,26 @@ async function createDocuProject(
     name: string,
     toPath: string
 ): Promise<string> {
+    // check if node is installed
     await execute("node -v");
+    // store project data (for editor)
     addProjectData({
         name,
         path: `${toPath}/${name}`,
         template: "classic",
     });
+    // create docusaurus project
     await execute(`npx create-docusaurus@latest ${name} classic`, toPath);
+    // create config file
+    const configData = JSON.stringify(
+        {
+            name,
+        },
+        null,
+        2
+    );
+    fs.writeFileSync(`${toPath}/${name}/docu-build.config.json`, configData);
+    // stop checking project status
     clearInterval(projectStatusChecker);
     projectStatusCheckerLoopCount = 0;
     return `${toPath}/${name}`;
@@ -81,20 +94,21 @@ export async function createProject(
     name: string,
     path?: string
 ): Promise<string> {
+    const { projectsPath } = store.get("userdata");
     /**
      * send updates to the renderer process on the status of creating the project
      */
     projectStatusChecker = setInterval(
-        () => checkProjectStatus(name, path || paths.projects),
+        () => checkProjectStatus(name, path || projectsPath),
         2000
     );
-    createFolder(paths.projects);
+    createFolder(projectsPath);
     // create project at the correct path
     if (path) {
         return createDocuProject(name, path);
     }
-    if (!fs.existsSync(`${paths.projects}/${name}`)) {
-        return createDocuProject(name, paths.projects);
+    if (!fs.existsSync(`${projectsPath}/${name}`)) {
+        return createDocuProject(name, projectsPath);
     }
     throw new Error("project already exists");
 }

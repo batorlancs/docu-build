@@ -28,6 +28,6 @@ IconButton.defaultProps = {
     tooltipProps: {
         arrow: true,
     },
-};
+} as Partial<IconButtonProps>;
 
 export default IconButton;

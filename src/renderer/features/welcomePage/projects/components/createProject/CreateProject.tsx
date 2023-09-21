@@ -1,9 +1,12 @@
 import React, { useRef } from "react";
-import { ModalWithButton } from "renderer/components/modals";
+import { Modal } from "renderer/components/modals";
 import { Formik, Form, FormikProps } from "formik";
 import { FormButton, TextInput } from "renderer/components/forms";
 import * as yup from "yup";
 import { ProjectData } from "main/store";
+import toast from "react-hot-toast";
+import { Button } from "renderer/components/buttons";
+import { useShow } from "renderer/hooks";
 import LoadingScreen from "./LoadingScreen";
 
 const FORM_INITIALS = {
@@ -14,6 +17,7 @@ const VALIDATION_SCHEMA = yup.object({
     projectName: yup
         .string()
         .min(3, "Project name must be at least 3 characters long.")
+        .max(20, "Project name must not exceed 20 characters.")
         .required("Project name is required.")
         .matches(
             /^[a-zA-Z0-9_]*$/,
@@ -34,6 +38,7 @@ const VALIDATION_SCHEMA = yup.object({
 });
 
 function CreateProject() {
+    const { show, toggleShow } = useShow();
     const formikRef = useRef<FormikProps<typeof FORM_INITIALS>>(null);
     const [isCreatingProject, setIsCreatingProject] =
         React.useState<string>("");
@@ -46,13 +51,15 @@ function CreateProject() {
                 name,
             })
             .then(() => {
-                // console.log("CREATED PROJECT", res);
                 setIsCreatingProject("[done]");
+                toast.success(`Project "${name}" has been created.`);
+                toggleShow();
                 return null;
             })
             .catch(() => {
                 setIsCreatingProject("");
-                // console.log(err.message);
+                toast.error(`Failed to create project "${name}".`);
+                toggleShow();
             });
     };
 
@@ -66,22 +73,27 @@ function CreateProject() {
 
     return (
         <>
-            <ModalWithButton
-                buttonProps={{
-                    children: "Create Project",
+            <Button
+                onClick={() => {
+                    resetForm();
+                    toggleShow();
                 }}
-                modalProps={{
-                    title: "Create a new project",
-                    modalDialogProps: {
-                        sx: {
-                            width: "400px",
-                            maxWidth: "400px",
-                        },
+            >
+                Create Project
+            </Button>
+            <Modal
+                show={show}
+                toggleShow={toggleShow}
+                title="Create a new project"
+                modalDialogProps={{
+                    sx: {
+                        width: "400px",
+                        maxWidth: "400px",
                     },
                 }}
-                onClose={resetForm}
             >
                 <Formik
+                    innerRef={formikRef}
                     initialValues={FORM_INITIALS}
                     validationSchema={VALIDATION_SCHEMA}
                     onSubmit={handleSubmit}
@@ -103,11 +115,14 @@ function CreateProject() {
                         </FormButton>
                     </Form>
                 </Formik>
-            </ModalWithButton>
+            </Modal>
             <LoadingScreen
                 show={
                     isCreatingProject !== "" && isCreatingProject !== "[done]"
                 }
+                toggleShow={() => {
+                    setIsCreatingProject("");
+                }}
                 value={40}
             />
         </>

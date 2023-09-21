@@ -12,10 +12,12 @@ function Button({ tooltipProps, tooltip, className, ...props }: ButtonProps) {
 
     return (
         <Tooltip title={tooltip} arrow={arrow} {...restTooltipProps}>
-            <MuiButton
-                className={twMerge("whitespace-nowrap", className)}
-                {...props}
-            />
+            <span>
+                <MuiButton
+                    className={twMerge("whitespace-nowrap", className)}
+                    {...props}
+                />
+            </span>
         </Tooltip>
     );
 }

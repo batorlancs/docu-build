@@ -20,16 +20,20 @@ let projectStatusCheckerLoopCount: number = 0;
  */
 const checkProjectStatus = (name: string, path: string): void => {
     projectStatusCheckerLoopCount += 1;
-    if (projectStatusCheckerLoopCount > 45) {
+    if (projectStatusCheckerLoopCount > 60) {
         sendProjectStatus("Something went wrong");
         clearInterval(projectStatusChecker);
         projectStatusCheckerLoopCount = 0;
     }
     // check if node_modules exists
     else if (fs.existsSync(`${path}/${name}/node_modules`)) {
-        sendProjectStatus("Finishing up");
+        sendProjectStatus("Final touches");
         clearInterval(projectStatusChecker);
         projectStatusCheckerLoopCount = 0;
+    }
+    // send long wait time message
+    else if (projectStatusCheckerLoopCount > 45) {
+        sendProjectStatus("This is taking longer than expected");
     }
     // check if main files exists (src, docusaurus.config.js, package.json)
     else if (

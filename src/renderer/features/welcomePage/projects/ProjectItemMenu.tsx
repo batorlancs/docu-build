@@ -6,19 +6,25 @@ import {
     FolderIcon,
 } from "@heroicons/react/24/outline";
 import { IconButtonWithMenu } from "renderer/components/buttons";
+import { useShow } from "renderer/hooks";
+import toast from "react-hot-toast";
+import DeleteProjectModal from "./components/deleteProject/DeleteProjectModal";
 
 type ProjectItemMenuProps = {
     data: ProjectData;
 };
 
 function ProjectItemMenu({ data }: ProjectItemMenuProps) {
+    const { show, toggleShow } = useShow();
+
     const handleDelete = async () => {
         try {
             await window.electron.ipcRenderer.invoke("remove-project", {
                 id: data.id,
             });
+            toast.success(`Project "${data.name}" has been deleted.`);
         } catch (err) {
-            console.log(err);
+            toast.error(`Failed to delete project "${data.name}".`);
         }
     };
 
@@ -30,46 +36,64 @@ function ProjectItemMenu({ data }: ProjectItemMenuProps) {
 
     const handleStartServer = async () => {
         try {
-            await window.electron.ipcRenderer.invoke("start-server", {
-                name: data.name,
-            });
+            // await window.electron.ipcRenderer.invoke("start-server", {
+            //     name: data.name,
+            // });
+            toast.promise(
+                window.electron.ipcRenderer.invoke("start-server", {
+                    name: data.name,
+                }),
+                {
+                    loading: "Starting server...",
+                    success: `Server "${data.name}" has been started.`,
+                    error: `Failed to start server "${data.name}".`,
+                }
+            );
         } catch (err) {
             console.log(err);
         }
     };
 
     return (
-        <IconButtonWithMenu
-            icon={<EllipsisVerticalIcon />}
-            menuList={[
-                {
-                    label: "Open in file explorer",
-                    icon: <FolderIcon />,
-                    onClick: handleOpenInFileExplorer,
-                },
-                {
-                    label: "Start server",
-                    icon: <ServerIcon />,
-                    onClick: handleStartServer,
-                    menuItemProps: {
-                        divider: true,
+        <>
+            <IconButtonWithMenu
+                icon={<EllipsisVerticalIcon />}
+                menuList={[
+                    {
+                        label: "Open in file explorer",
+                        icon: <FolderIcon />,
+                        onClick: handleOpenInFileExplorer,
                     },
-                },
-                {
-                    label: "Delete",
-                    icon: <TrashIcon />,
-                    onClick: handleDelete,
-                    menuItemProps: {
-                        sx: {
-                            color: "error.main",
+                    {
+                        label: "Start server",
+                        icon: <ServerIcon />,
+                        onClick: handleStartServer,
+                        menuItemProps: {
+                            divider: true,
                         },
                     },
-                },
-            ]}
-            buttonSx={{
-                marginRight: "8px",
-            }}
-        />
+                    {
+                        label: "Delete",
+                        icon: <TrashIcon />,
+                        onClick: toggleShow,
+                        menuItemProps: {
+                            sx: {
+                                color: "error.main",
+                            },
+                        },
+                    },
+                ]}
+                buttonSx={{
+                    marginRight: "8px",
+                }}
+            />
+            <DeleteProjectModal
+                data={data}
+                show={show}
+                toggleShow={toggleShow}
+                onConfirm={handleDelete}
+            />
+        </>
     );
 }
 

@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from "path";
-import { app, BrowserWindow, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
 import MenuBuilder from "./menu";
@@ -20,6 +20,8 @@ import { setFileIpcHandlers } from "./file/file";
 
 const DEFAULT_WIDTH = 1200;
 const DEFAULT_HEIGHT = 600;
+const DEFAULT_MIN_WIDTH = 800;
+const DEFAULT_MIN_HEIGHT = 600;
 
 class AppUpdater {
     constructor() {
@@ -62,6 +64,8 @@ const createWindow = async (options?: createWindowOptions) => {
         navigate,
         width = DEFAULT_WIDTH,
         height = DEFAULT_HEIGHT,
+        minWidth = DEFAULT_MIN_WIDTH,
+        minHeight = DEFAULT_MIN_HEIGHT,
     } = options || {};
 
     if (isDebug) {
@@ -80,6 +84,8 @@ const createWindow = async (options?: createWindowOptions) => {
         show: false,
         width,
         height,
+        minWidth,
+        minHeight,
         icon: getAssetPath("icon.png"),
         webPreferences: {
             preload: app.isPackaged
@@ -145,6 +151,16 @@ app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
         app.quit();
     }
+});
+
+ipcMain.on("set-window-size", (event, arg) => {
+    const { width, height } = arg;
+    mainWindow?.setSize(width, height);
+});
+
+ipcMain.on("set-window-min-size", (event, arg) => {
+    const { width, height } = arg;
+    mainWindow?.setMinimumSize(width, height);
 });
 
 app.whenReady()

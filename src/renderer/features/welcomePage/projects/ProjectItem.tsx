@@ -6,6 +6,7 @@ import {
     Typography,
     Avatar,
 } from "@mui/joy";
+import { useNavigate } from "react-router-dom";
 import { ProjectData } from "../../../../main/store";
 import ProjectItemMenu from "./ProjectItemMenu";
 
@@ -14,6 +15,8 @@ type ProjectItemProps = {
 };
 
 function ProjectItem({ data }: ProjectItemProps) {
+    const navigate = useNavigate();
+
     return (
         <ListItem endAction={<ProjectItemMenu data={data} />}>
             <ListItemButton
@@ -23,6 +26,9 @@ function ProjectItem({ data }: ProjectItemProps) {
                     "&:hover": {
                         backgroundColor: "transparent",
                     },
+                }}
+                onClick={() => {
+                    navigate(`editor/${data.id}`);
                 }}
             >
                 <ListItemDecorator>

@@ -6,7 +6,7 @@ import Button, { ButtonProps } from "../buttons/Button";
 type ModalWithButtonProps = {
     modalProps: Omit<ModalProps, "show" | "toggleShow" | "children">;
     buttonProps: Omit<ButtonProps, "onClick">;
-    children: React.ReactNode;
+    children: (toggleShow: () => void) => React.JSX.Element;
     onClose?: () => void;
 };
 
@@ -29,7 +29,7 @@ function ModalWithButton({
                 }}
                 {...modalProps}
             >
-                {children}
+                {children(toggleShow)}
             </Modal>
         </>
     );

@@ -1,4 +1,4 @@
 import WelcomePage from "./welcomePage/WelcomePage";
-import Project from "./Project/Project";
+import Editor from "./editor/Editor";
 
-export { WelcomePage, Project };
+export { WelcomePage, Editor };

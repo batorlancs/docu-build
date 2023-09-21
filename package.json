@@ -111,6 +111,7 @@
         "fs": "^0.0.1-security",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-hot-toast": "^2.4.1",
         "react-router-dom": "^6.11.2",
         "tailwind-merge": "^1.14.0",
         "uuid": "^9.0.0",

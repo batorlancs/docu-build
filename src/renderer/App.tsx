@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { joyTheme, materialTheme } from "./theme";
 import "./App.css";
 import { Editor, WelcomePage } from "./pages";
+import { WindowManager } from "./utils";
 
 export default function App() {
     return (
@@ -21,6 +22,7 @@ export default function App() {
                 modeStorageKey="demo_dark-mode-by-default"
             >
                 <Router>
+                    <WindowManager />
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
                         <Route path="editor/:projectid" element={<Editor />} />

@@ -8,8 +8,7 @@ export type Channels =
     | "projects-changed"
     | "userdata-changed"
     | "open-in-file-explorer"
-    | "set-window-size"
-    | "set-window-min-size";
+    | "set-window-size";
 
 export type InvokeChannels =
     | "get-app-path"

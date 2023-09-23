@@ -154,13 +154,15 @@ app.on("window-all-closed", () => {
 });
 
 ipcMain.on("set-window-size", (event, arg) => {
-    const { width, height } = arg;
-    mainWindow?.setSize(width, height);
-});
-
-ipcMain.on("set-window-min-size", (event, arg) => {
-    const { width, height } = arg;
-    mainWindow?.setMinimumSize(width, height);
+    if (arg === "welcome") {
+        mainWindow?.setMinimumSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT);
+        mainWindow?.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        mainWindow?.center();
+    } else if (arg === "editor") {
+        mainWindow?.setSize(1600, 800);
+        mainWindow?.setMinimumSize(1600, 800);
+        mainWindow?.center();
+    }
 });
 
 app.whenReady()

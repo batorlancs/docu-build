@@ -20,7 +20,7 @@ let projectStatusCheckerLoopCount: number = 0;
  */
 const checkProjectStatus = (name: string, path: string): void => {
     projectStatusCheckerLoopCount += 1;
-    if (projectStatusCheckerLoopCount > 60) {
+    if (projectStatusCheckerLoopCount > 120) {
         sendProjectStatus("Something went wrong");
         clearInterval(projectStatusChecker);
         projectStatusCheckerLoopCount = 0;
@@ -64,7 +64,7 @@ async function createDocuProject(
     toPath: string
 ): Promise<string> {
     // check if node is installed
-    await execute("node -v");
+    // await execute("node -v");
     // store project data (for editor)
     addProjectData({
         name,

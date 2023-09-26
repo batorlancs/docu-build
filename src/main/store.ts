@@ -1,6 +1,6 @@
 import Store from "electron-store";
 import { app } from "electron";
-import { generateColor } from "./util";
+// import { generateColor } from "./util";
 import { createFolder } from "./file/file";
 
 export type ProjectData = {
@@ -46,45 +46,45 @@ const projectsPath = defaultProjectsPath();
 export const store = new Store<StoreType>({
     defaults: {
         projects: [
-            {
-                id: "1",
-                name: "test",
-                path: `${projectsPath}/test`,
-                template: "classic",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                avatar: {
-                    color: generateColor(),
-                    str: "TE",
-                    textColor: "#ffffff",
-                },
-            },
-            {
-                id: "2",
-                name: "test2",
-                path: `${projectsPath}/test2`,
-                template: "classic",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                avatar: {
-                    color: generateColor(),
-                    str: "TE",
-                    textColor: "#ffffff",
-                },
-            },
-            {
-                id: "3",
-                name: "test3",
-                path: `${projectsPath}/test3`,
-                template: "classic",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                avatar: {
-                    color: generateColor(),
-                    str: "TE",
-                    textColor: "#ffffff",
-                },
-            },
+            // {
+            //     id: "1",
+            //     name: "test",
+            //     path: `${projectsPath}/test`,
+            //     template: "classic",
+            //     createdAt: new Date(),
+            //     updatedAt: new Date(),
+            //     avatar: {
+            //         color: generateColor(),
+            //         str: "TE",
+            //         textColor: "#ffffff",
+            //     },
+            // },
+            // {
+            //     id: "2",
+            //     name: "test2",
+            //     path: `${projectsPath}/test2`,
+            //     template: "classic",
+            //     createdAt: new Date(),
+            //     updatedAt: new Date(),
+            //     avatar: {
+            //         color: generateColor(),
+            //         str: "TE",
+            //         textColor: "#ffffff",
+            //     },
+            // },
+            // {
+            //     id: "3",
+            //     name: "test3",
+            //     path: `${projectsPath}/test3`,
+            //     template: "classic",
+            //     createdAt: new Date(),
+            //     updatedAt: new Date(),
+            //     avatar: {
+            //         color: generateColor(),
+            //         str: "TE",
+            //         textColor: "#ffffff",
+            //     },
+            // },
         ],
         userdata: {
             projectsPath,
@@ -92,4 +92,4 @@ export const store = new Store<StoreType>({
     },
 });
 
-store.clear();
+// store.clear();

@@ -2,6 +2,7 @@ import { FolderIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@mui/joy";
 import { UserData } from "main/store";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Button } from "renderer/components/buttons";
 
 function Preferences() {
@@ -32,9 +33,11 @@ function Preferences() {
             const selectedPath = await window.electron.ipcRenderer.invoke(
                 "select-projects-path"
             );
-            console.log(selectedPath);
+            if (selectedPath != null) {
+                toast.success("Path selected");
+            }
         } catch (err) {
-            console.log(err);
+            toast.error("Folder must be empty");
         }
     };
 

@@ -56,9 +56,10 @@ function CreateProject() {
                 toggleShow();
                 return null;
             })
-            .catch(() => {
+            .catch((err) => {
                 setIsCreatingProject("");
                 toast.error(`Failed to create project "${name}".`);
+                toast.error(err.message);
                 toggleShow();
             });
     };

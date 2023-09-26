@@ -18,9 +18,9 @@ import type { createWindowOptions } from ".";
 import { setHomeIpcHandlers } from "./home/home";
 import { setFileIpcHandlers } from "./file/file";
 
-const DEFAULT_WIDTH = 1200;
+const DEFAULT_WIDTH = app.isPackaged ? 800 : 1000;
 const DEFAULT_HEIGHT = 600;
-const DEFAULT_MIN_WIDTH = 800;
+const DEFAULT_MIN_WIDTH = app.isPackaged ? 800 : 1000;
 const DEFAULT_MIN_HEIGHT = 600;
 
 class AppUpdater {

@@ -39,9 +39,7 @@ function LoadingScreen({ show, toggleShow, value }: LoadingScreenProps) {
     return (
         <NotClosableModal show={show}>
             <div className="flex flex-col items-center justify-center">
-                <div className="flex items-center justify-center mb-4">
-                    <Typography>{statusMsg}...</Typography>
-                </div>
+                <Typography marginBottom={2}>{statusMsg}...</Typography>
                 <LinearProgress
                     color="primary"
                     determinate={false}
@@ -51,6 +49,9 @@ function LoadingScreen({ show, toggleShow, value }: LoadingScreenProps) {
                         width: "100%",
                     }}
                 />
+                <Typography color="primary" marginTop={1} level="body-xs">
+                    This should take 1 to 2 minutes
+                </Typography>
             </div>
         </NotClosableModal>
     );

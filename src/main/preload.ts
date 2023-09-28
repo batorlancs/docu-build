@@ -1,14 +1,28 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-import { createWindowOptions } from "./index";
 
-export type Channels = "ipc-example";
-export type InvokeChannels = "get-app-path";
+export type Channels =
+    | "ipc-example"
+    | "project-status"
+    | "projects-changed"
+    | "userdata-changed"
+    | "open-in-file-explorer"
+    | "set-window-size";
+
+export type InvokeChannels =
+    | "get-app-path"
+    | "create-project"
+    | "start-server"
+    | "get-projects"
+    | "get-userdata"
+    | "remove-project"
+    | "open-project"
+    | "select-projects-path";
 
 const electronHandler = {
     ipcRenderer: {
-        sendMessage(channel: Channels, ...args: unknown[]) {
+        send(channel: Channels, ...args: unknown[]) {
             ipcRenderer.send(channel, ...args);
         },
         on(channel: Channels, func: (...args: unknown[]) => void) {
@@ -28,37 +42,8 @@ const electronHandler = {
         invoke(channel: InvokeChannels, ...args: unknown[]): Promise<unknown> {
             return ipcRenderer.invoke(channel, ...args);
         },
-        getAppPath(): Promise<string> {
-            return ipcRenderer.invoke("get-app-path");
-        },
-        // reopenWindow(): Promise<void> {
-        //     return ipcRenderer.invoke("open-window-and-navigate");
-        // },
-        openNewWindow(options: createWindowOptions): Promise<void> {
-            return new Promise((resolve, reject) => {
-                ipcRenderer
-                    .invoke("open-new-window", options)
-                    .then((res) => {
-                        if (res) {
-                            resolve();
-                        } else {
-                            reject();
-                        }
-                        return true;
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            });
-        },
-        closeWindow(): void {
-            ipcRenderer.send("close-window");
-        },
-        setWindowSize(width: number, height: number): void {
-            ipcRenderer.send("set-window-size", {
-                width,
-                height,
-            });
+        removeAllListeners(channel: Channels) {
+            ipcRenderer.removeAllListeners(channel);
         },
     },
 };

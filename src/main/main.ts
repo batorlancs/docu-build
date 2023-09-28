@@ -9,15 +9,19 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from "path";
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import log from "electron-log";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
+import { setHomeIpcHandlers } from "./home/home";
+import { setFileIpcHandlers } from "./file/file";
 
-const DEFAULT_WIDTH = 1024;
-const DEFAULT_HEIGHT = 728;
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 600;
+const DEFAULT_MIN_WIDTH = 800;
+const DEFAULT_MIN_HEIGHT = 600;
 
 class AppUpdater {
     constructor() {
@@ -28,16 +32,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.handle("get-app-path", async () => {
-    return app.getAppPath();
-});
-
-ipcMain.on("ipc-example", async (event, arg) => {
-    const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-    console.log(msgTemplate(arg));
-    event.reply("ipc-example", msgTemplate("pong"));
-});
+export const getMainWindow = () => mainWindow;
 
 if (process.env.NODE_ENV === "production") {
     const sourceMapSupport = require("source-map-support");
@@ -69,6 +64,8 @@ const createWindow = async (options?: createWindowOptions) => {
         navigate,
         width = DEFAULT_WIDTH,
         height = DEFAULT_HEIGHT,
+        minWidth = DEFAULT_MIN_WIDTH,
+        minHeight = DEFAULT_MIN_HEIGHT,
     } = options || {};
 
     if (isDebug) {
@@ -87,6 +84,8 @@ const createWindow = async (options?: createWindowOptions) => {
         show: false,
         width,
         height,
+        minWidth,
+        minHeight,
         icon: getAssetPath("icon.png"),
         webPreferences: {
             preload: app.isPackaged
@@ -128,24 +127,22 @@ const createWindow = async (options?: createWindowOptions) => {
     new AppUpdater();
 };
 
-ipcMain.on("close-window", async () => {
-    if (mainWindow) {
-        mainWindow.close();
-    }
-});
-
-ipcMain.on("set-window-size", (_, arg) => {
-    const { width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT } = arg as {
-        width: number;
-        height: number;
-    };
-    if (mainWindow) {
-        mainWindow.setSize(width, height);
-    }
-});
-
 /**
  * Add event listeners...
+ */
+
+// ipcMain.handle("get-app-path", async () => {
+//     return app.getAppPath();
+// });
+
+// ipcMain.on("ipc-example", async (event, arg) => {
+//     const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//     console.log(msgTemplate(arg));
+//     event.reply("ipc-example", msgTemplate("pong"));
+// });
+
+/**
+ * Window handlers
  */
 
 app.on("window-all-closed", () => {
@@ -153,6 +150,18 @@ app.on("window-all-closed", () => {
     // after all windows have been closed
     if (process.platform !== "darwin") {
         app.quit();
+    }
+});
+
+ipcMain.on("set-window-size", (event, arg) => {
+    if (arg === "welcome") {
+        mainWindow?.setMinimumSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT);
+        mainWindow?.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        mainWindow?.center();
+    } else if (arg === "editor") {
+        mainWindow?.setSize(1600, 800);
+        mainWindow?.setMinimumSize(1600, 800);
+        mainWindow?.center();
     }
 });
 
@@ -166,3 +175,9 @@ app.whenReady()
         });
     })
     .catch(console.log);
+
+/**
+ * File Handlers
+ */
+setHomeIpcHandlers();
+setFileIpcHandlers();

@@ -1,1 +1,1 @@
-export { closeWindow, setWindowSize } from "./windowManager";
+export { default as WindowManager } from "./WindowManager";

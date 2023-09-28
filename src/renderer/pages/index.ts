@@ -1,4 +1,4 @@
 import WelcomePage from "./welcomePage/WelcomePage";
-import Editor from "./editor/Editor";
+import EditorPage from "./editor/EditorPage";
 
-export { WelcomePage, Editor };
+export { WelcomePage, EditorPage };

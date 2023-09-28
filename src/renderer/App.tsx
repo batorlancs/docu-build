@@ -7,7 +7,7 @@ import { CssVarsProvider } from "@mui/joy";
 import { Toaster } from "react-hot-toast";
 import { joyTheme, materialTheme } from "./theme";
 import "./App.css";
-import { Editor, WelcomePage } from "./pages";
+import { EditorPage, WelcomePage } from "./pages";
 import { WindowManager } from "./utils";
 
 export default function App() {
@@ -25,7 +25,10 @@ export default function App() {
                     <WindowManager />
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
-                        <Route path="editor/:projectid" element={<Editor />} />
+                        <Route
+                            path="editor/:projectid"
+                            element={<EditorPage />}
+                        />
                     </Routes>
                     <Toaster
                         toastOptions={{

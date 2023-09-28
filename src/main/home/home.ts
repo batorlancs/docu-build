@@ -15,12 +15,18 @@ import { openProject } from "./openproject";
 import { selectProjectsPath } from "./preferences";
 
 export type SearchOptions = {
+    id?: string;
     name?: string;
     path?: string;
 };
 
 export const getProjectsData = (search?: SearchOptions): ProjectData[] => {
     const projects = store.get("projects");
+    if (search && search.id) {
+        return projects.filter((project) => {
+            return project.id === search.id;
+        });
+    }
     if (search && search.name) {
         return projects.filter((project) => {
             return project.name.includes(search.name?.toLowerCase() ?? "");
@@ -90,8 +96,10 @@ export function setHomeIpcHandlers(): void {
     });
 
     ipcMain.handle("get-projects", (event, args) => {
-        const { name, path } = (args as { name?: string; path?: string }) ?? {};
+        const { id, name, path } =
+            (args as { id?: string; name?: string; path?: string }) ?? {};
         return getProjectsData({
+            id,
             name,
             path,
         });

@@ -7,10 +7,7 @@ function Header() {
     const nav = useNavigate();
 
     return (
-        <Sheet
-            variant="soft"
-            className="h-12 flex items-center justify-between px-12"
-        >
+        <Sheet className="h-12 flex items-center justify-between px-12">
             <div>
                 <button
                     type="button"

@@ -2,7 +2,7 @@
 import React from "react";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import Sidebar from "./sidebar/Sidebar";
-import Main from "./pages/Main";
+import Main from "./pages/main/Main";
 
 function Editor() {
     return (

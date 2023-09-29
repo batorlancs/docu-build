@@ -1,25 +1,31 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-// import { useEditorContext } from "./context";
-import { Sheet } from "@mui/joy";
-import Header from "./header/Header";
+import { CubeIcon } from "@heroicons/react/24/outline";
+import Sidebar from "./sidebar/Sidebar";
+import Main from "./pages/Main";
 
 function Editor() {
-    // const { projectData } = useEditorContext();
-
     return (
         <div className="h-screen w-screen overflow-hidden">
-            <div className="grid grid-cols-[300px_1fr] h-full">
-                <Sheet className="bg-black h-full border-r border-neutral-800 p-4">
-                    df
-                </Sheet>
-                <Sheet>
-                    <Header />
-                    <Routes>
-                        <Route path="/" />
-                    </Routes>
-                </Sheet>
-            </div>
+            <Sidebar
+                items={[
+                    {
+                        title: "Home",
+                        icon: CubeIcon,
+                        component: Main,
+                    },
+                    {
+                        title: "Project",
+                        icon: CubeIcon,
+                        component: () => <div>project</div>,
+                    },
+                    {
+                        title: "Settings",
+                        icon: CubeIcon,
+                        component: () => <div>project</div>,
+                    },
+                ]}
+            />
         </div>
     );
 }

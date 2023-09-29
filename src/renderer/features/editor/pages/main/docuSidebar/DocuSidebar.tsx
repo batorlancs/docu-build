@@ -2,7 +2,6 @@ import React from "react";
 import { TreeView } from "@mui/x-tree-view";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { CustomTreeItem } from "./components/ContentComponent";
-import { Button } from "renderer/components/buttons";
 
 function DocuSidebar() {
     const [expanded, setExpanded] = React.useState<string[]>([]);

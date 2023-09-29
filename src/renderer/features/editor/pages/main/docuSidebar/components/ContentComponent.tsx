@@ -72,6 +72,7 @@ const CustomContent = React.forwardRef(function CustomContent(
                 onClick={handleSelectionClick}
                 component="div"
                 className={classes.label}
+                noWrap
             >
                 {label}
             </Typography>

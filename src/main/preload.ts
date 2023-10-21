@@ -18,7 +18,8 @@ export type InvokeChannels =
     | "get-userdata"
     | "remove-project"
     | "open-project"
-    | "select-projects-path";
+    | "select-projects-path"
+    | "get-project-data";
 
 const electronHandler = {
     ipcRenderer: {

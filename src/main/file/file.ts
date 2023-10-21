@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { ipcMain, shell, dialog } from "electron";
+import { promisify } from "util";
 
 export const createFolder = (path: string) => {
     if (!fs.existsSync(path)) {
@@ -24,4 +25,14 @@ export const setFileIpcHandlers = () => {
             shell.showItemInFolder(path);
         }
     });
+};
+
+export const isDirectory = async (path: string) => {
+    const fsStat = promisify(fs.stat);
+    try {
+        const stat = await fsStat(path);
+        return stat.isDirectory();
+    } catch (err) {
+        return false;
+    }
 };

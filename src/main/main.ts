@@ -17,6 +17,7 @@ import { resolveHtmlPath } from "./util";
 import type { createWindowOptions } from ".";
 import { setHomeIpcHandlers } from "./home/home";
 import { setFileIpcHandlers } from "./file/file";
+import { setProjectIpcHandlers } from "./project/project";
 
 const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 600;
@@ -182,3 +183,4 @@ app.whenReady()
  */
 setHomeIpcHandlers();
 setFileIpcHandlers();
+setProjectIpcHandlers();

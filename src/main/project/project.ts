@@ -1,4 +1,5 @@
 import { ipcMain } from "electron";
+import { promisify } from "util";
 import * as fs from "fs";
 import * as path from "path";
 import { store } from "../store";
@@ -9,22 +10,49 @@ const getProject = (id: string) => {
     return project;
 };
 
-function readAllFilesInsideDirectories(directory: string) {
-    function readDirectory(dirPath: string) {
-        const files = fs.readdirSync(dirPath);
+async function readAllFilesInsideDirectories(directory: string) {
+    const fsreaddir = promisify(fs.readdir);
+    const fsreadfile = promisify(fs.readFile);
+    const fsstat = promisify(fs.stat);
+
+    // async function readDirectory(dirPath: string) {
+    //     const files = await fsreaddir(dirPath);
+    //     const result: any = {};
+
+    //     files.forEach(async (file) => {
+    //         const filePath = path.join(dirPath, file);
+    //         const stats = await fsstat(filePath);
+
+    //         if (stats.isDirectory()) {
+    //             result[file] = await readDirectory(filePath); // Recurse into subdirectory
+    //         } else if (stats.isFile()) {
+    //             const fileContent = await fsreadfile(filePath, "utf-8");
+    //             result[file] = fileContent; // Store file content
+    //         }
+    //     });
+
+    //     return result;
+    // }
+
+    async function readDirectory(dirPath: string) {
+        const files = await fsreaddir(dirPath);
         const result: any = {};
 
-        files.forEach((file) => {
+        // Create an array to hold promises
+        const promises = files.map(async (file) => {
             const filePath = path.join(dirPath, file);
-            const stats = fs.statSync(filePath);
+            const stats = await fsstat(filePath);
 
             if (stats.isDirectory()) {
-                result[file] = readDirectory(filePath); // Recurse into subdirectory
+                result[file] = await readDirectory(filePath); // Recurse into subdirectory
             } else if (stats.isFile()) {
-                const fileContent = fs.readFileSync(filePath, "utf-8");
+                const fileContent = await fsreadfile(filePath, "utf-8");
                 result[file] = fileContent; // Store file content
             }
         });
+
+        // Wait for all promises to resolve
+        await Promise.all(promises);
 
         return result;
     }
@@ -68,7 +96,9 @@ function readAllFilesInsideDirectories(directory: string) {
 
 const getProjectData = async (id: string) => {
     const project = getProject(id);
-    const filecontents = readAllFilesInsideDirectories(project.path);
+    const filecontents = await readAllFilesInsideDirectories(
+        `${project.path}/docs`
+    );
     return filecontents;
 };
 

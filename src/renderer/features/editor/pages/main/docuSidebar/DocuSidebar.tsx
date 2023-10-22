@@ -1,24 +1,62 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TreeView } from "@mui/x-tree-view";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { type NestedDocs, useDocs } from "renderer/context";
 import { CustomTreeItem } from "./components/ContentComponent";
 
 function DocuSidebar() {
     const [expanded, setExpanded] = React.useState<string[]>([]);
-    const [selected, setSelected] = React.useState<string[]>([]);
+    const [selected, setSelected] = React.useState<string>("1");
+    const { docs, setCurrentDoc } = useDocs();
+
+    useEffect(() => {
+        setCurrentDoc(selected);
+    }, [selected, setCurrentDoc]);
 
     const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
         setExpanded(nodeIds);
     };
 
-    const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-        setSelected(nodeIds);
+    const handleSelect = (event: React.SyntheticEvent, nodeId: string) => {
+        setSelected(nodeId);
     };
 
     const handleExpandClick = () => {
+        // check for all the nodeids that have children
+        const getDirectories = (data: NestedDocs, res: number[]) => {
+            data.forEach((node) => {
+                if (node.children) {
+                    res.push(node.id);
+                    getDirectories(node.children, res);
+                }
+            });
+            return res;
+        };
+
+        const directories = getDirectories(docs, []);
+        // convert number array to string array
+        const strDirectories = directories.map((id) => id.toString());
+
         setExpanded((oldExpanded) =>
-            oldExpanded.length === 0 ? ["1", "4", "7", "8", "9"] : []
+            oldExpanded.length === 0 ? strDirectories : []
         );
+    };
+
+    const renderTree = (nodes: NestedDocs): React.ReactNode => {
+        if (nodes.length > 0) {
+            return nodes.map((node) => (
+                <CustomTreeItem
+                    key={node.id.toString()}
+                    nodeId={node.id.toString()}
+                    label={node.name}
+                >
+                    {Array.isArray(node.children)
+                        ? renderTree(node.children)
+                        : null}
+                </CustomTreeItem>
+            ));
+        }
+        return null;
     };
 
     return (
@@ -39,24 +77,8 @@ function DocuSidebar() {
                 selected={selected}
                 onNodeToggle={handleToggle}
                 onNodeSelect={handleSelect}
-                multiSelect
             >
-                <CustomTreeItem nodeId="1" label="Applications">
-                    <CustomTreeItem nodeId="2" label="Calendar" />
-                    <CustomTreeItem nodeId="3" label="Chrome" />
-                    <CustomTreeItem nodeId="4" label="Webstorm">
-                        <CustomTreeItem nodeId="5" label="src" />
-                        <CustomTreeItem nodeId="6" label="index.js" />
-                    </CustomTreeItem>
-                </CustomTreeItem>
-                <CustomTreeItem nodeId="7" label="Documents">
-                    <CustomTreeItem nodeId="8" label="Material-UI">
-                        <CustomTreeItem nodeId="9" label="src">
-                            <CustomTreeItem nodeId="10" label="index.js" />
-                            <CustomTreeItem nodeId="11" label="tree-view.js" />
-                        </CustomTreeItem>
-                    </CustomTreeItem>
-                </CustomTreeItem>
+                {renderTree(docs)}
             </TreeView>
         </div>
     );

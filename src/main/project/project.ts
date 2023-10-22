@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { ipcMain } from "electron";
 import { promisify } from "util";
 import * as fs from "fs";
@@ -34,65 +35,95 @@ async function readAllFilesInsideDirectories(directory: string) {
     //     return result;
     // }
 
-    async function readDirectory(dirPath: string) {
-        const files = await fsreaddir(dirPath);
-        const result: any = {};
+    // async function readDirectory(dirPath: string) {
+    //     const files = await fsreaddir(dirPath);
+    //     const result: any = {};
 
-        // Create an array to hold promises
-        const promises = files.map(async (file) => {
+    //     // Create an array to hold promises
+    //     const promises = files.map(async (file) => {
+    //         const filePath = path.join(dirPath, file);
+    //         const stats = await fsstat(filePath);
+
+    //         if (stats.isDirectory()) {
+    //             result[file] = await readDirectory(filePath); // Recurse into subdirectory
+    //         } else if (stats.isFile()) {
+    //             const fileContent = await fsreadfile(filePath, "utf-8");
+    //             result[file] = fileContent; // Store file content
+    //         }
+    //     });
+
+    //     // Wait for all promises to resolve
+    //     await Promise.all(promises);
+
+    //     return result;
+    // }
+
+    type Result = {
+        id: number;
+        name: string;
+        content: string;
+        children?: Result;
+    }[];
+
+    let nodeid = 0;
+
+    async function readDirectory(dirPath: string): Promise<Result> {
+        const files = await fsreaddir(dirPath);
+        const result: Result = [];
+
+        // const promises = files.map(async (file) => {
+        //     const filePath = path.join(dirPath, file);
+        //     const stats = await fsstat(filePath);
+
+        //     if (stats.isDirectory() && file !== "img") {
+        //         nodeid += 1;
+        //         result.push({
+        //             id: nodeid,
+        //             name: file,
+        //             content: "",
+        //             children: await readDirectory(filePath),
+        //         });
+        //     } else if (stats.isFile() && file.endsWith(".md")) {
+        //         nodeid += 1;
+        //         const fileContent = await fsreadfile(filePath, "utf-8");
+        //         result.push({
+        //             id: nodeid,
+        //             name: file,
+        //             content: fileContent,
+        //         });
+        //     }
+        // });
+        // await Promise.all(promises);
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const file of files) {
             const filePath = path.join(dirPath, file);
             const stats = await fsstat(filePath);
 
-            if (stats.isDirectory()) {
-                result[file] = await readDirectory(filePath); // Recurse into subdirectory
-            } else if (stats.isFile()) {
+            if (stats.isDirectory() && file !== "img") {
+                nodeid += 1;
+                result.push({
+                    id: nodeid,
+                    name: file,
+                    content: "",
+                    children: await readDirectory(filePath),
+                });
+            } else if (stats.isFile() && file.endsWith(".md")) {
+                nodeid += 1;
                 const fileContent = await fsreadfile(filePath, "utf-8");
-                result[file] = fileContent; // Store file content
+                result.push({
+                    id: nodeid,
+                    name: file,
+                    content: fileContent,
+                });
             }
-        });
-
-        // Wait for all promises to resolve
-        await Promise.all(promises);
+        }
 
         return result;
     }
 
     return readDirectory(directory);
 }
-
-// async function readAllFilesInDirectory(
-//     directoryPath: string
-// ): Promise<Map<string, string>> {
-//     const filesContents = new Map<string, string>();
-//     const readdir = promisify(fs.readdir);
-//     const readFile = promisify(fs.readFile);
-//     const docspath = path.join(directoryPath, "docs");
-
-//     let files: string[] = [];
-//     try {
-//         files = await readdir(docspath);
-//         console.log(files);
-//     } catch (err) {
-//         console.log(err);
-//         return filesContents;
-//     }
-
-//     files.forEach(async (file) => {
-//         try {
-//             const filePath = path.join(docspath, file);
-//             if (!isDirectory(filePath)) {
-//                 const fileContent = await readFile(filePath, "utf-8");
-//                 filesContents.set(file, fileContent);
-//             } else {
-//                 // go through this directory
-//             }
-//         } catch (err) {
-//             console.log(err);
-//         }
-//     });
-
-//     return filesContents;
-// }
 
 const getProjectData = async (id: string) => {
     const project = getProject(id);

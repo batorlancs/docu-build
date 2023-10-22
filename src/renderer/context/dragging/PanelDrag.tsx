@@ -13,9 +13,9 @@ function PanelDrag({ name, align, className }: PanelDragProps) {
     return (
         <PanelResizeHandle
             className={twMerge(
-                `bg-neutral-600 ${
-                    align === "vert" ? "w-[2px] hover:w-[4px]" : "h-[2px]"
-                } ${dragging === name ? "w-[4px]" : "w-[2px]"}`,
+                `bg-neutral-900 hover:w-[8px] hover:bg-main-900 ${
+                    align === "vert" ? "w-[5px]" : "h-[5px]"
+                } ${dragging === name ? "w-[8px] bg-main-900" : "w-[5px]"}`,
                 className
             )}
             onDragging={(isDragging) => {

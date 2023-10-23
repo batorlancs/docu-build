@@ -66,6 +66,7 @@ const CustomContent = React.forwardRef(function CustomContent(
             style={{
                 height: "30px",
                 borderRadius: "4px",
+                marginBottom: "6px",
             }}
         >
             <Typography

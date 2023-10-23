@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Track (the container of the scrollbar) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/* Thumb (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+    background: #444; /* Change the color */
+    border-radius: 5px; /* Round the corners */
+}
+
+/* Track on hover */
+::-webkit-scrollbar:hover {
+    width: 15px;
+}
+
+/* Thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Change the color on hover */
+}
+
+/* Track and thumb when the scrollbar is active (clicked) */
+::-webkit-scrollbar-thumb:active {
+    background: #333;
+}

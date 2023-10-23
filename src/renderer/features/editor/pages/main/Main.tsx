@@ -24,7 +24,7 @@ function Main() {
                         <DocuSidebar />
                     </Panel>
                     <PanelDrag name="sidebar-editor" />
-                    <Panel order={2}>
+                    <Panel order={2} className="w-0">
                         <Header />
                         <Sheet
                             variant="soft"
